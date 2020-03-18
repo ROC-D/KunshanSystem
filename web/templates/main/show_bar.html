@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}区域专利分布{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                {% for ancestor in ancestors %}
+                    {% if loop.index0 == depth %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ ancestor }}</li>
+                    {% else %}
+                        <li class="breadcrumb-item">
+                        <a href="{{ url_for('main.show_bar', depth=loop.index0) }}">{{ ancestor }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </nav>
+        <div class="row">
+            <div class="col-12">
+                <div style="width:100%;height: 600px;" id="main"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+    let COUNTER = {{ counter | safe }};
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.6.0/dist/echarts.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main/show_bar.js') }}"></script>
+{% endblock %}
+

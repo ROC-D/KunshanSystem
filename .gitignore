@@ -1,0 +1,15 @@
+# .gitignore
+
+
+.idea
+__pycache__/
+venv/
+
+web/config.py
+
+uploads
+files
+test.html
+
+.flaskenv
+.env
