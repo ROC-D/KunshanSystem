@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}展示区域知识产权分布{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.show_pic') }}">Home</a></li>
+                {% for ancestor in ancestors %}
+                    {% if loop.index == loop.length %}
+                        <li class="breadcrumb-item active" aria-current="page" id="cur_level" value="{{ ancestor.level }}"
+                        {% if ancestor.level == 3 %}
+                            data-id="{{ ancestor.com_id }}"
+                        {% endif %}
+                        >
+                            {{ ancestor.key }}
+                        </li>
+                    {% else %}
+                        <li class="breadcrumb-item">
+                        <a href="{{ url_for('main.show_pic', level=ancestor.level) }}">
+                            {{ ancestor.key }}
+                        </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </nav>
+        <div class="row">
+            <div class="col-8">
+                <div style="width:100%;height: 600px;" id="main"></div>
+            </div>
+            <div class="col-4 mt-5">
+                <ul class="list-group" id="description">
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.6.0/dist/echarts.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main/show_pic.js') }}"></script>
+{% endblock %}

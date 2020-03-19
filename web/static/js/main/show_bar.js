@@ -37,6 +37,7 @@ option = {
         top: 20,
         bottom: 20,
         data: ["A", "B", "C", "D", "E", "F", "G", "H"],
+        show: true,
         //selected: data.selected
     },
     xAxis: {
