@@ -14,6 +14,6 @@
 >1. [Bootstrap-Flask](https://bootstrap-flask.readthedocs.io/en/latest/)
 >该库是bootstrap4的封装，提供了若干个jinja2函数。
 ## 3. Docker部署
->目前使用到了docker-compose，目前暂时只生成了一个flask容器，用作外部访问。
->
+>目前使用到了docker-compose，目前暂时只生成了一个flask容器，flask容器可以通过5000端口访问，该容器并未做端口映射
+>nginx负责反向代理，负责转发请求和flask容器，默认绑定80端口。
 
