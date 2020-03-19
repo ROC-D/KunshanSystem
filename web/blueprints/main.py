@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, render_template, request, abort, redirect, url_for
 from web.utils import db
 
@@ -28,10 +30,196 @@ def show_bar(depth):
         if length is None:
             length = len(ipc['ipc_id'])
     # 根据ipc获取对应的专利数量，目前设定最多返回30个
-    sql_format = 'select left(pa_main_kind_num, {0}) as code, count(1) as amount from enterprise_patent where left(pa_main_kind_num, {0}) in ({1}) group by code order by amount desc limit 0,30'
+    sql_format = 'select left(pa_main_kind_num, {0}) as code, count(1) as amount ' \
+                 'from enterprise_patent where left(pa_main_kind_num, {0}) in ({1})' \
+                 'group by code order by amount desc limit 0,30'
     sql = sql_format.format(length, ','.join(params))
     # 查询，并返回dict的数据
     counter = db.select(sql)
     for datum in counter:
         datum['title'] = ipc_mapping[datum['code']]
     return render_template('main/show_bar.html', ancestors=ancestors, depth=depth, counter=counter)
+
+
+@main_bp.route('/pie')
+def show_pic():
+    level = request.args.get("level")
+    level = 0 if not level else int(level)
+
+    ancestors = getAncestors(level)
+
+    if 2 == level:
+        type = request.args.get("type")
+        type = '发明专利' if not type else type
+
+        ancestors = getAncestors(level=2, property_type=type)
+
+        return render_template("main/company_property_sort.html", ancestors=ancestors)
+
+    if 3 == level:
+        com_name = request.args.get("name")
+        com_id = request.args.get("com_id")
+        ancestors = getAncestors(level=3, com_id=com_id, com_name=com_name)
+        print(ancestors)
+
+    return render_template('main/show_pic.html', ancestors=ancestors)
+
+
+@main_bp.route('/pie_data')
+def get_pie_data():
+    level = request.args.get('level')
+    town = request.args.get('town')
+    if not town:
+        town = "开发区"
+
+    if '0' == level or not level:
+        return getAllDistribution(town)
+
+    elif '1' == level:
+        return getProperty(town)
+
+    elif '2' == level:
+        property_type = request.args.get("type")
+        return companyPropertySequence(town, property_type)
+
+    elif '3' == level:
+        com_id = request.args.get("id")
+        return companyProperty(com_id)
+
+    return json.dumps({})
+
+
+def getAllDistribution(town="开发区"):
+    """
+    获取全部企业的知识产权分布情况
+    """
+
+    sql = "SELECT COUNT(en_id) as total_com, sum(has_property) as focus_com " \
+          "FROM enterprise_property WHERE en_town='%s'" % town
+    data = db.select(sql)
+    data = format_pie_data(data)
+
+    if data is None:
+        return json.dumps({"status": "获取数据失败"})
+
+    return json.dumps({
+        "pie_data": [
+            {"key": "拥有知识产权的企业", "value": data["focus_com"], "click2": 1},
+            {"key": "其他企业", "value": data["total_com"] - data["focus_com"], "click2": False},
+        ],
+        "status": "ok"
+    })
+
+
+def getProperty(town="开发区"):
+    """
+    获取知识产权分布
+    """
+    sql = "SELECT SUM(patent) as patent, SUM(utility_model_patent) as utility, " \
+          "SUM(design_patent) as design, SUM(software_copyright) as sw FROM enterprise_property WHERE en_town='%s'" \
+          % town
+
+    data = db.select(sql)
+
+    return format_property_data(data, click2=2)
+
+
+def companyPropertySequence(town="开发区", property_type='发明专利'):
+    """
+    根据企业所拥有的某类知识产权数量排名
+    """
+    property_type_dict = {
+        '发明专利': "patent",
+        '实用新型专利': "utility_model_patent",
+        '外观设计': "design_patent",
+        '软件著作权': "software_copyright"
+    }
+    if str(property_type) not in property_type_dict:
+        print(property_type)
+        return json.dumps({"status": "property_type 参数类型错误"})
+    key = property_type_dict.get(property_type)
+
+    sql = "SELECT enterprise_property.en_id as id,en_name as name,{key} as num FROM enterprise_property " \
+          "LEFT JOIN en_base_info " \
+          "on  enterprise_property.en_id=en_base_info.en_id " \
+          "WHERE enterprise_property.en_town='{town}' ORDER BY {key} DESC LIMIT 30".format(key=key, town=town)
+
+    data = db.select(sql)
+    if 0 == len(data):
+        return json.dumps({"status": "数据获取失败"})
+
+    return json.dumps({
+        "data": data,
+        "bar_graph": True,
+        "status": "ok"
+    })
+
+
+def companyProperty(com_id):
+    """
+    获取某一企业的知识产权信息
+    """
+    try:
+        com_id = int(com_id)
+    except Exception as e:
+        return json.dumps({"status": "企业id格数错误"})
+
+    sql = "SELECT patent as patent, utility_model_patent as utility, design_patent as design, software_copyright as sw " \
+          "FROM enterprise_property WHERE en_id=%d" % int(com_id)
+    data = db.select(sql)
+
+    return format_property_data(data)
+
+
+def getAncestors(level, property_type="", com_name="", com_id=0):
+    # 用于显示面包屑导航栏
+    ancestors = []
+    if 0 <= level:
+        ancestors.append({"level": 0, "key": "企业分布"})
+    if 1 <= level:
+        ancestors.append({
+            "level": 1,
+            "key": "知识产权分布"
+        })
+    if 2 <= level:
+        ancestors.append({
+            "level": 2,
+            "key": property_type
+        })
+    if 3 <= level:
+        ancestors.append({
+            "level": 3,
+            "key": com_name,
+            "com_id": com_id
+        })
+    return ancestors
+
+
+def format_pie_data(data):
+    if 0 == len(data):
+        return None
+
+    data = data[0]
+    for key, value in data.items():
+        if value is None:
+            value = 0
+        data[key] = int(value)
+    return data
+
+
+def format_property_data(data, click2=None):
+    data = format_pie_data(data)
+
+    if data is None:
+        return json.dumps({"status": "获取数据失败"})
+
+    return json.dumps({
+        "status": "ok",
+        "pie_data": [
+            {"key": "发明专利", "value": data["patent"], "click2": click2},
+            {"key": "实用新型专利", "value": data["utility"], "click2": click2},
+            {"key": "外观设计", "value": data["design"], "click2": click2},
+            # {"key": "软件著作权", "value": data["sw"], "click2": click2}
+        ]
+    })
+
