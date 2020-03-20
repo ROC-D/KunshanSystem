@@ -25,10 +25,12 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-    let COUNTER = {{ counter | safe }};
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@4.6.0/dist/echarts.min.js"></script>
     <script src="{{ url_for('static', filename='js/main/show_bar.js') }}"></script>
+    <script>
+        let COUNTER = {{ counter | safe }};
+        setOption(COUNTER);
+    </script>
+
 {% endblock %}
 

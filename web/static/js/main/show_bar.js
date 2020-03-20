@@ -68,6 +68,6 @@ function setOption(counter) {
     }
     option.xAxis.data = xAxis;
     option.series[0].data = data;
+    myChart.hideLoading();
     myChart.setOption(option);
 }
-setOption(COUNTER);
