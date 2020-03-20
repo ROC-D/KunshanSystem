@@ -7,9 +7,6 @@ from web.utils import db
 main_bp = Blueprint('main', __name__)
 
 
-@main_bp.route('/')
-def index():
-    return redirect(url_for('main.show_bar', depth=0))
 
 
 @main_bp.route('/area', defaults={'depth': 0})
@@ -41,6 +38,7 @@ def show_bar(depth):
     return render_template('main/show_bar.html', ancestors=ancestors, depth=depth, counter=counter)
 
 
+@main_bp.route('/')
 @main_bp.route('/pie')
 def show_pic():
     level = request.args.get("level")
