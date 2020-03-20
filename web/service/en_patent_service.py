@@ -1,58 +1,8 @@
 """
 处理有关企业专利信息的数据库获取结果的处理
 """
+from web.utils import db
 from web.service import enterprise_patent_dao as DAO
-
-
-def get_pa_count_by_firstkind():
-    """
-    初始获取所有一类技术领域的专利数量
-    :return:
-    """
-    firstkind = DAO.get_all_field()[0]
-    result = []
-    for i in firstkind:
-        result.append([i, DAO.get_count_by_firstkind(i)[0]])
-    return result
-
-
-def get_count_by_firstkind(field):
-    """
-    获取第二类的专利数量
-    :param field:
-    :return:
-    """
-    second_field = DAO.get_second_field(field)
-    result = []
-    for i in second_field:
-        result.append([i, DAO.get_count_by_secondkind(i)[0]])
-    return result
-
-
-def get_count_by_secondkind(field):
-    """
-    获取第三类的专利数量
-    :param field:
-    :return:
-    """
-    third_field = DAO.get_third_field(field)
-    result = []
-    for i in third_field:
-        result.append([i, DAO.get_count_by_thirdkind(i)[0]])
-    return result
-
-
-def get_patent_by_first_ipc():
-    """
-    获取所有第一类ipc的所有专利数量
-    :param ipc_id:
-    :return:
-    """
-    all_first_ipc = DAO.get_first_ipc()
-    result = []
-    for i in all_first_ipc:
-        result.append([i[0] + ":" + i[1], DAO.get_patent_by_ipc(i[0])])
-    return result
 
 
 def get_engineer_and_en_by_ipc2(ipc_id):
@@ -90,50 +40,38 @@ def get_engineer_and_en_by_ipc2(ipc_id):
     return result
 
 
-def get_engineer_count_with_first_ipc():
+def get_engineer_count(depth, town):
     """
-    根据第一类ipcid获取工程师数量
-    :return:
+    根据IPC类型获取工程师数量
+    :param depth: int IPC层级 => 0, 1, 2
+    :param town: 所属区镇
+    :return: None or [
+        {"code": 'B', "title": "作业；运输", "amount": 2795},
+        ...
+    ]
     """
-    all_first_ipc = DAO.get_first_ipc()
-    print("all_first_ipc", all_first_ipc)
-    result = []
-    for i in all_first_ipc:
-        result.append([i[0] + ":" + i[1], DAO.get_count_with_ipc(i[0])])
-    result = sorted(result, key=lambda x: (x[1]), reverse=True)
-    return result
+    depth2ipc_dict = {
+        0: "ipc_root",
+        1: "ipc_class",
+        2: "ipc_class_sm"
+    }
+    if depth not in depth2ipc_dict:
+        return None
 
+    ipc_mapping = DAO.get_ipc_map(depth)
 
-def get_engineer_count_with_second_ipc():
-    """
-    根据第二类ipcid获取工程师数量
-    :return:
-    """
-    all_second_ipc = DAO.get_second_ipc()
-    result = []
-    for i in all_second_ipc:
-        if DAO.get_count_with_ipc(i[0]) > 100:
-            result.append([i[0] + ":" + i[1], DAO.get_count_with_ipc(i[0])])
-    result = sorted(result, key=lambda x: (x[1]), reverse=True)
-    return result
-
-
-def get_engineer_count_with_third_ipc():
-    """
-    根据第三类ipcid获取工程师数量
-    :return:
-    """
-    all_third_ipc = DAO.get_all_third_ipc()
-    result = []
-    for i in all_third_ipc:
-        if DAO.get_count_with_ipc2(i[0]) > 50:
-            result.append([i[0] + ":" + i[1], DAO.get_count_with_ipc2(i[0])])
-    result = sorted(result, key=lambda x: (x[1]), reverse=True)
-    return result
+    # ({"ipc":xxx, "number":123}, ...)
+    data = DAO.get_count_with_ipc(ipc_code=depth2ipc_dict.get(depth), town=town)
+    print(data)
+    return [
+        {
+            "code": item["ipc"],
+            "title": ipc_mapping[item["ipc"]],
+            "amount": item["number"]
+        }
+        for item in data
+    ]
 
 
 if __name__ == "__main__":
-    # print(get_count_by_firstkind("电子信息技术"))
-    # print(get_engineer_and_en_by_ipc("A23C7/00"))
-    print(get_engineer_count_with_third_ipc())
-    # pass
+    pass

@@ -2,86 +2,17 @@
 有关企业专利的数据库查询文件
 """
 # -*- coding: utf-8 -*-
-import pymysql
-from web.config import MYSQL_CONFIG
-
-conn = pymysql.connect(**MYSQL_CONFIG)
-cursor = conn.cursor()
+from web.utils import db
 
 
-def get_first_ipc():
+def get_ipc_map(depth=0):
     """
-    获取第一类ipc目录，只有1位
+    获取ipc目录
     :return:
     """
-    sql = "select ipc_id, ipc_content from ipc where char_length (ipc_id) = 1"
-    cursor.execute(sql)
-    temp = cursor.fetchall()
-    result = []
-    for i in temp:
-        result.append([i[0], i[1]])
-    return result
+    ipc_list = db.select('select ipc_id,ipc_content from ipc where depth=?', depth)
 
-
-def get_second_ipc():
-    """
-    获取第二类ipc目录，只有4位
-    :return:
-    """
-    sql = "select ipc_id, ipc_content from ipc where char_length (ipc_id) = 4"
-    cursor.execute(sql)
-    temp = cursor.fetchall()
-    result = []
-    for i in temp:
-        if "(" in i[1]:
-            result.append([i[0], i[1][0:i[1].index("(")]])
-        else:
-            result.append([i[0], i[1]])
-    return result
-
-
-def get_ipc_content_by_ipc_id(ipc_id):
-    """
-    根据ipc_id获取ipc内容
-    :return:
-    """
-    if len(ipc_id) > 4:
-        ipc_id = ipc_id[0:4]
-    sql = "select ipc_content from ipc where ipc_id = %s".format(ipc_id)
-    cursor.execute(sql, ipc_id)
-    temp = cursor.fetchone()
-    result = ''
-    if "(" in temp[0]:
-        result = temp[0][0: temp[0].index("(")]
-    else:
-        result = temp[0]
-    return result
-
-
-def get_all_third_ipc():
-    """
-    从专利表中统计第三类ipc目录
-    :return:
-    """
-    sql = "select pa_main_kind_num from enterprise_patent"
-    cursor.execute(sql)
-    temp = cursor.fetchall()
-    result = []
-    for i in temp:
-        result.append(i[0])
-    result_dict = {}
-    for key in result:
-        result_dict[key] = result_dict.get(key, 0) + 1
-    result_1 = sorted(result_dict.items(), key=lambda x: x[1], reverse=True)
-    result_2 = []
-    for i in result_1:
-        if len(i[0]) > 5:
-            result_2.append([i[0], i[1]])
-    result_2 = sorted(result_2, key=lambda x: x[1], reverse=True)[0:50]
-    final_result = []
-    for i in result_2:
-        final_result.append([i[0], get_ipc_content_by_ipc_id(i[0])])
-    return final_result
+    return {ipc['ipc_id']: ipc['ipc_content'] for ipc in ipc_list}
 
 
 def get_engineer_and_en_by_ipc(ipc_id):
@@ -90,43 +21,36 @@ def get_engineer_and_en_by_ipc(ipc_id):
     :param field: 技术领域
     :return: 公司以及工程师
     """
-    sql = "select en_id, pa_inventor from enterprise_patent where pa_main_kind_num =%s "
-    cursor.execute(sql, ipc_id)
-    result = cursor.fetchall()
+    sql = "select en_id, pa_inventor from enterprise_patent where pa_main_kind_num ={} ".format(ipc_id)
+    result = db.select(sql)
     return result
 
 
-def get_count_with_ipc(ipc_id):
+def get_count_with_ipc(ipc_code, town, limit=40):
     """
     根据ipc获取相关的所有工程师数量
+    :param ipc_code: 'ipc_root' or 'ipc_class' or 'ipc_class_sm'
+    :param town: "开发区"
+    :param limit: 数量
     :return:
+    tuple ==> (
+        {"ipc": "A", "number": 123},
+        ...
+    )
     """
-    query_param = ['%s%%' % ipc_id]
-    sql = "select pa_inventor from enterprise_patent where pa_main_kind_num like %s"
-    cursor.execute(sql, query_param)
-    temp = cursor.fetchall()
-    result = []
-    for i in temp:
-        for j in i:
-            result.append(j)
-    result = list(set(result))
-    return len(result)
+    sql = """
+        SELECT COUNT(num) as number,ipc from 
+        (SELECT COUNT(engineer_patent.engineer_id) as num, {ipc_code} as ipc FROM engineer_patent 
+            LEFT JOIN enterprise_engineer
+            on engineer_patent.engineer_id=enterprise_engineer.engineer_id 
+            LEFT JOIN  en_base_info
+            on enterprise_engineer.en_id=en_base_info.en_id
+            WHERE en_town="{town}"
+            GROUP BY {ipc_code}, engineer_patent.engineer_id) as t
+        GROUP BY ipc ORDER BY number desc limit {limit}""".format(ipc_code=ipc_code, town=town, limit=limit)
 
-
-def get_count_with_ipc2(ipc_id):
-    """
-    根据ipc获取相关的所有工程师数量,第三类
-    :return:
-    """
-    sql = "select pa_inventor from enterprise_patent where pa_main_kind_num = %s".format(ipc_id)
-    cursor.execute(sql, ipc_id)
-    temp = cursor.fetchall()
-    result = []
-    for i in temp:
-        for j in i:
-            result.append(j)
-    result = list(set(result))
-    return len(result)
+    data = db.select(sql)
+    return data
 
 
 def get_en_name_by_en_id(en_id):
@@ -135,10 +59,10 @@ def get_en_name_by_en_id(en_id):
     :param en_id:
     :return:
     """
-    sql = "select en_name from en_base_info where en_id =%s".format(en_id)
-    cursor.execute(sql, en_id)
-    result = cursor.fetchone()
-    return result[0]
+    sql = "select en_name from en_base_info where en_id =%s" .format(en_id)
+    # cursor.execute(sql, en_id)
+    # result = cursor.fetchone()
+    # return result[0]
 
 
 if __name__ == "__main__":
