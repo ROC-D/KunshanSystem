@@ -1,6 +1,4 @@
-import json
-
-from flask import Blueprint, render_template, request, abort, redirect, url_for
+from flask import Blueprint, render_template, request, abort, redirect, url_for, jsonify
 from web.utils import db
 
 
@@ -86,7 +84,7 @@ def get_pie_data():
         com_id = request.args.get("id")
         return companyProperty(com_id)
 
-    return json.dumps({})
+    return jsonify({"status": "error level"})
 
 
 def getAllDistribution(town="开发区"):
@@ -100,9 +98,9 @@ def getAllDistribution(town="开发区"):
     data = format_pie_data(data)
 
     if data is None:
-        return json.dumps({"status": "获取数据失败"})
+        return jsonify({"status": "获取数据失败"})
 
-    return json.dumps({
+    return jsonify({
         "pie_data": [
             {"key": "拥有知识产权的企业", "value": data["focus_com"], "click2": 1},
             {"key": "其他企业", "value": data["total_com"] - data["focus_com"], "click2": False},
@@ -136,7 +134,7 @@ def companyPropertySequence(town="开发区", property_type='发明专利'):
     }
     if str(property_type) not in property_type_dict:
         print(property_type)
-        return json.dumps({"status": "property_type 参数类型错误"})
+        return jsonify({"status": "property_type 参数类型错误"})
     key = property_type_dict.get(property_type)
 
     sql = "SELECT enterprise_property.en_id as id,en_name as name,{key} as num FROM enterprise_property " \
@@ -146,9 +144,9 @@ def companyPropertySequence(town="开发区", property_type='发明专利'):
 
     data = db.select(sql)
     if 0 == len(data):
-        return json.dumps({"status": "数据获取失败"})
+        return jsonify({"status": "数据获取失败"})
 
-    return json.dumps({
+    return jsonify({
         "data": data,
         "bar_graph": True,
         "status": "ok"
@@ -162,7 +160,7 @@ def companyProperty(com_id):
     try:
         com_id = int(com_id)
     except Exception as e:
-        return json.dumps({"status": "企业id格数错误"})
+        return jsonify({"status": "企业id格数错误"})
 
     sql = "SELECT patent as patent, utility_model_patent as utility, design_patent as design, software_copyright as sw " \
           "FROM enterprise_property WHERE en_id=%d" % int(com_id)
@@ -211,9 +209,9 @@ def format_property_data(data, click2=None):
     data = format_pie_data(data)
 
     if data is None:
-        return json.dumps({"status": "获取数据失败"})
+        return jsonify({"status": "获取数据失败"})
 
-    return json.dumps({
+    return jsonify({
         "status": "ok",
         "pie_data": [
             {"key": "发明专利", "value": data["patent"], "click2": click2},
