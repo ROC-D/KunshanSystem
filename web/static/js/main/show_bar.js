@@ -33,17 +33,16 @@ option = {
             let param = params[0];
             if (param.seriesType != "bar")
                 return;
-            //TODO:
             let code = param.name;
             let title = CODE_TITLE_MAPPING[code];
-            if (title.length > 30){
-                if(title.length > 300){
-                    title = title.substring(0, 300) + "...";
-                }
+            if (title.length > 50){
 
                 let title_list = title.split("；");
                 title = "<ul>"
                 for(let i = 0; i < title_list.length; i++){
+                    if(title_list[i].length > 30){
+                        title_list[i] = title_list[i].substring(0, 30) + "...";
+                    }
                     title += `<li>${title_list[i]}</li>`;
                 }
                 title += "</ul>";
