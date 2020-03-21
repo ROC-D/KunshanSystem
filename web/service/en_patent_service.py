@@ -1,43 +1,47 @@
 """
 处理有关企业专利信息的数据库获取结果的处理
 """
-from web.utils import db
 from web.service import enterprise_patent_dao as DAO
 
+# TODO 加入config文件
+depth2ipc_dict = {
+    0: "ipc_root",
+    1: "ipc_class",
+    2: "ipc_class_sm"
+}
 
-def get_engineer_and_en_by_ipc2(ipc_id):
+IPC_MAP = {}
+
+
+def get_ipc_map(depth=0):
+    """
+    获取ipc目录
+    :return: dict ==> {"A":"xxxx", "B": "xxxx"}
+    """
+    global IPC_MAP
+    str_depth = str(depth)
+    if str_depth not in IPC_MAP:
+        IPC_MAP[str_depth] = DAO.get_ipc_map(depth)
+
+    return {ipc['ipc_id']: ipc['ipc_content'] for ipc in IPC_MAP[str_depth]}
+
+
+def get_engineer_group_by_ipc(depth, ipc_code, town, limit):
     """
     根据ipc获取工程师以及所在的公司,用于工程师分组
-    :param ipc_id: ipc
+    :param depth: int IPC层级 => 0, 1, 2
+    :param ipc_code: ipc 代码
+    :param town: 区镇
+    :param limit: 工程师人数上限
     :return: 前10家的企业以及工程师
     """
-    temp = DAO.get_engineer_and_en_by_ipc(ipc_id)
-    en_id_list = []
-    for i in temp:
-        en_id_list.append(i[0])
-    en_id_dict = {}
-    for key in en_id_list:
-        en_id_dict[key] = en_id_dict.get(key, 0) + 1
-    list1 = sorted(en_id_dict.items(), key=lambda x: x[1], reverse=True)
-    ten_en = []
-    for i in list1[0:10]:
-        ten_en.append(i[0])
-    result = []
-    for i in ten_en:
-        temp1 = []
-        for j in temp:
-            if j[0] == i:
-                temp1.extend(j[1].split(","))
-        engineer_dict = {}
-        for key in temp1:
-            engineer_dict[key] = engineer_dict.get(key, 0) + 1
-        engineer_list = sorted(engineer_dict.items(), key=lambda x: x[1], reverse=True)
-        ten_engineer = []
-        for x in engineer_list[0:15]:
-            ten_engineer.append(x[0])
-        if ten_engineer != ['不公告发明人']:
-            result.append([DAO.get_en_name_by_en_id(i), ten_engineer])
-    return result
+    if depth not in depth2ipc_dict:
+        return None
+    data = DAO.get_engineer_group_by_ipc(ipc_type=depth2ipc_dict[depth],
+                                         ipc_code=ipc_code,
+                                         town=town,
+                                         limit=limit)
+    return data
 
 
 def get_engineer_count(depth, town):
@@ -50,19 +54,14 @@ def get_engineer_count(depth, town):
         ...
     ]
     """
-    depth2ipc_dict = {
-        0: "ipc_root",
-        1: "ipc_class",
-        2: "ipc_class_sm"
-    }
     if depth not in depth2ipc_dict:
         return None
 
-    ipc_mapping = DAO.get_ipc_map(depth)
+    ipc_mapping = get_ipc_map(depth)
 
     # ({"ipc":xxx, "number":123}, ...)
-    data = DAO.get_count_with_ipc(ipc_code=depth2ipc_dict.get(depth), town=town)
-    print(data)
+    data = DAO.get_engineer_count_with_ipc(ipc_type=depth2ipc_dict.get(depth), town=town)
+    # print(data)
     return [
         {
             "code": item["ipc"],
@@ -71,6 +70,24 @@ def get_engineer_count(depth, town):
         }
         for item in data
     ]
+
+
+def get_enterprise_count(depth, town):
+    """
+    获取区域内各个IPC细分领域内的 专利数量
+    :return : dict ==> {"A": 123, ...}
+    """
+    # code 和 title的映射
+    # {"A":"xxx", ...}
+    ipc_mapping = get_ipc_map(depth)
+    params = []
+    length = None
+    for ipc in ipc_mapping.keys():
+        params.append('"%s"' % ipc)
+        if length is None:
+            length = len(ipc)
+
+    return DAO.get_enterprise_count_with_ipc(length=length, params=",".join(params), town=town)
 
 
 if __name__ == "__main__":
