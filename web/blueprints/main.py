@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, abort, redirect, url_for, jsonify
+from web.service import en_patent_service as SERVICE
 from web.utils import db
 
 
@@ -18,24 +19,18 @@ def show_bar(depth):
     if depth >= len(ancestors):
         abort(400)
     # code 和 title的映射
-    ipc_list = db.select('select ipc_id,ipc_content from ipc where depth=?', depth)
-    params = []
-    ipc_mapping = {}
-    length = None
-    for ipc in ipc_list:
-        ipc_mapping[ipc['ipc_id']] = ipc['ipc_content']
-        params.append('"%s"' % ipc['ipc_id'])
-        if length is None:
-            length = len(ipc['ipc_id'])
-    # 根据ipc获取对应的专利数量，目前设定最多返回30个
-    sql_format = 'select left(pa_main_kind_num, {0}) as code, count(1) as amount ' \
-                 'from enterprise_patent where left(pa_main_kind_num, {0}) in ({1})' \
-                 'group by code order by amount desc limit 0,30'
-    sql = sql_format.format(length, ','.join(params))
-    # 查询，并返回dict的数据
-    counter = db.select(sql)
-    for datum in counter:
+    ipc_mapping = SERVICE.get_ipc_map(depth)
+    data = SERVICE.get_enterprise_count(depth, town="开发区")
+
+    for datum in data:
         datum['title'] = ipc_mapping[datum['code']]
+
+    counter = {
+        "data": data,
+        "title": "昆山开发区企业技术领域分布",
+        "xAxis_name": "技术领域",
+        "yAxis_name": "企业数量"
+    }
     return render_template('main/show_bar.html', ancestors=ancestors, depth=depth, counter=counter)
 
 
