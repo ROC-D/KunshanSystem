@@ -192,7 +192,6 @@ myChart.on('click', function (params) {
     else if(params.seriesType == "bar"){
         let com_id = NAME_ID_MAPPING[params.name];
         let url = `/pie?level=3&com_id=${com_id}&name=${params.name}`;
-        //alert(url)
         window.location = url;
     }
 });

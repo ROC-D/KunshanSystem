@@ -1,6 +1,5 @@
-import json
-
-from flask import Blueprint, render_template, request, abort, redirect, url_for
+from flask import Blueprint, render_template, request, abort, redirect, url_for, jsonify
+from web.service import en_patent_service as SERVICE
 from web.utils import db
 
 
@@ -17,24 +16,18 @@ def show_bar(depth):
     if depth >= len(ancestors):
         abort(400)
     # code 和 title的映射
-    ipc_list = db.select('select ipc_id,ipc_content from ipc where depth=?', depth)
-    params = []
-    ipc_mapping = {}
-    length = None
-    for ipc in ipc_list:
-        ipc_mapping[ipc['ipc_id']] = ipc['ipc_content']
-        params.append('"%s"' % ipc['ipc_id'])
-        if length is None:
-            length = len(ipc['ipc_id'])
-    # 根据ipc获取对应的专利数量，目前设定最多返回30个
-    sql_format = 'select left(pa_main_kind_num, {0}) as code, count(1) as amount ' \
-                 'from enterprise_patent where left(pa_main_kind_num, {0}) in ({1})' \
-                 'group by code order by amount desc limit 0,30'
-    sql = sql_format.format(length, ','.join(params))
-    # 查询，并返回dict的数据
-    counter = db.select(sql)
-    for datum in counter:
+    ipc_mapping = SERVICE.get_ipc_map(depth)
+    data = SERVICE.get_enterprise_count(depth, town="开发区")
+
+    for datum in data:
         datum['title'] = ipc_mapping[datum['code']]
+
+    counter = {
+        "data": data,
+        "title": "昆山开发区企业技术领域分布",
+        "xAxis_name": "技术领域",
+        "yAxis_name": "企业数量"
+    }
     return render_template('main/show_bar.html', ancestors=ancestors, depth=depth, counter=counter)
 
 
@@ -84,7 +77,7 @@ def get_pie_data():
         com_id = request.args.get("id")
         return companyProperty(com_id)
 
-    return json.dumps({})
+    return jsonify({"status": "error level"})
 
 
 def getAllDistribution(town="开发区"):
@@ -98,9 +91,9 @@ def getAllDistribution(town="开发区"):
     data = format_pie_data(data)
 
     if data is None:
-        return json.dumps({"status": "获取数据失败"})
+        return jsonify({"status": "获取数据失败"})
 
-    return json.dumps({
+    return jsonify({
         "pie_data": [
             {"key": "拥有知识产权的企业", "value": data["focus_com"], "click2": 1},
             {"key": "其他企业", "value": data["total_com"] - data["focus_com"], "click2": False},
@@ -134,7 +127,7 @@ def companyPropertySequence(town="开发区", property_type='发明专利'):
     }
     if str(property_type) not in property_type_dict:
         print(property_type)
-        return json.dumps({"status": "property_type 参数类型错误"})
+        return jsonify({"status": "property_type 参数类型错误"})
     key = property_type_dict.get(property_type)
 
     sql = "SELECT enterprise_property.en_id as id,en_name as name,{key} as num FROM enterprise_property " \
@@ -144,9 +137,9 @@ def companyPropertySequence(town="开发区", property_type='发明专利'):
 
     data = db.select(sql)
     if 0 == len(data):
-        return json.dumps({"status": "数据获取失败"})
+        return jsonify({"status": "数据获取失败"})
 
-    return json.dumps({
+    return jsonify({
         "data": data,
         "bar_graph": True,
         "status": "ok"
@@ -160,7 +153,7 @@ def companyProperty(com_id):
     try:
         com_id = int(com_id)
     except Exception as e:
-        return json.dumps({"status": "企业id格数错误"})
+        return jsonify({"status": "企业id格数错误"})
 
     sql = "SELECT patent as patent, utility_model_patent as utility, design_patent as design, software_copyright as sw " \
           "FROM enterprise_property WHERE en_id=%d" % int(com_id)
@@ -209,9 +202,9 @@ def format_property_data(data, click2=None):
     data = format_pie_data(data)
 
     if data is None:
-        return json.dumps({"status": "获取数据失败"})
+        return jsonify({"status": "获取数据失败"})
 
-    return json.dumps({
+    return jsonify({
         "status": "ok",
         "pie_data": [
             {"key": "发明专利", "value": data["patent"], "click2": click2},
