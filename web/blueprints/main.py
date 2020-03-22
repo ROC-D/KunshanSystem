@@ -53,7 +53,7 @@ def show_pic():
         com_name = request.args.get("name")
         com_id = request.args.get("com_id")
         ancestors = getAncestors(level=3, com_id=com_id, com_name=com_name)
-        print(ancestors)
+        # print(ancestors)
 
     return render_template('main/show_pic.html', ancestors=ancestors)
 
@@ -101,6 +101,7 @@ def getAllDistribution(town="开发区"):
             {"key": "其他企业", "value": data["total_com"] - data["focus_com"], "click2": False},
         ],
         "status": "ok"
+        ""
     })
 
 
@@ -128,13 +129,12 @@ def companyPropertySequence(town="开发区", property_type='发明专利'):
         '软件著作权': "software_copyright"
     }
     if str(property_type) not in property_type_dict:
-        print(property_type)
         return jsonify({"status": "property_type 参数类型错误"})
     key = property_type_dict.get(property_type)
 
     sql = "SELECT enterprise_property.en_id as id,en_name as name,{key} as num FROM enterprise_property " \
           "LEFT JOIN en_base_info " \
-          "on  enterprise_property.en_id=en_base_info.en_id " \
+          "on enterprise_property.en_id=en_base_info.en_id " \
           "WHERE enterprise_property.en_town='{town}' ORDER BY {key} DESC LIMIT 30".format(key=key, town=town)
 
     data = db.select(sql)
@@ -144,6 +144,9 @@ def companyPropertySequence(town="开发区", property_type='发明专利'):
     return jsonify({
         "data": data,
         "bar_graph": True,
+        "title": "企业拥有 %s 数量排名" % key,
+        "xAxis_name": "企业名",
+        "yAxis_name": "数量/件",
         "status": "ok"
     })
 
@@ -216,3 +219,11 @@ def format_property_data(data, click2=None):
         ]
     })
 
+
+def fill_pieGraph_params(data={}, title="", subtitle="", legend=[]):
+    data.update({
+        "title": title,
+        "subtitle": subtitle,
+        "legend": legend,
+    })
+    return jsonify(data)
