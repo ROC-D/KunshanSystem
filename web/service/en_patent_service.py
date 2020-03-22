@@ -90,5 +90,34 @@ def get_enterprise_count(depth, town):
     return DAO.get_enterprise_count_with_ipc(length=length, params=",".join(params), town=town)
 
 
+def get_enterprise_and_engineers(depth, town, limit=40):
+    """
+    获取区域内各个IPC细分领域内的 企业和工程师数量
+    :return : dict ==> {"A": 123, ...}
+    :param depth:
+    :param town:
+    :param limit:
+    :return:
+    """
+    # 先获取工程师分组
+    engineers = DAO.get_engineer_count_with_ipc(ipc_type=depth2ipc_dict.get(depth), town=town, limit=limit)
+    ipc_list, params, length = [], [], None
+    for engineer in engineers:
+        ipc_list.append(engineer['ipc'])
+        params.append('"%s"' % engineer['ipc'])
+        if length is None:
+            length = len(engineer['ipc'])
+    # 获取到工程师分组对应的IPC
+    enterprises = DAO.get_enterprise_count_with_ipc(length=length, params=",".join(params), town=town, limit=limit)
+    # 让企业数据顺序和工程师顺序一致
+    temp = [None] * len(enterprises)
+    for enterprise in enterprises:
+        index = ipc_list.index(enterprise['code'])
+        temp[index] = enterprise
+    enterprises = temp
+
+    return enterprises, engineers
+
+
 if __name__ == "__main__":
     pass

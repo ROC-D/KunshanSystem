@@ -6,27 +6,24 @@ from web.utils import db
 main_bp = Blueprint('main', __name__)
 
 
-@main_bp.route('/')
-def index():
-    return redirect(url_for('main.show_bar', depth=0))
-
-
 @main_bp.route('/area', defaults={'depth': 0})
 @main_bp.route('/area/<int:depth>')
 def show_bar(depth):
     # TODO:到大组级别，ipc共有8000多，目前暂时只到小类
     ancestors = ['部', '大类', '小类']
+    town = '开发区'
     if depth >= len(ancestors):
         abort(400)
     # code 和 title的映射
     ipc_mapping = SERVICE.get_ipc_map(depth)
-    data = SERVICE.get_enterprise_count(depth, town="开发区")
+    enterprises, engineers = SERVICE.get_enterprise_and_engineers(depth, town, limit=20)
 
-    for datum in data:
+    for datum in enterprises:
         datum['title'] = ipc_mapping[datum['code']]
 
     counter = {
-        "data": data,
+        "enterprises": enterprises,
+        "engineers": engineers,
         "title": "昆山开发区企业技术领域分布",
         "xAxis_name": "技术领域",
         "yAxis_name": "企业数量"
@@ -34,6 +31,7 @@ def show_bar(depth):
     return render_template('main/show_bar.html', ancestors=ancestors, depth=depth, counter=counter)
 
 
+@main_bp.route('/')
 @main_bp.route('/pie')
 def show_pic():
     level = request.args.get("level")
