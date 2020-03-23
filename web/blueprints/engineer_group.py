@@ -1,5 +1,7 @@
-from flask import Blueprint, render_template, request, abort, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, abort, redirect, url_for, jsonify, current_app
 from web.service import en_patent_service as engineer_service
+import flask_excel as excel
+
 
 engineer_bp = Blueprint('engineer', __name__)
 
@@ -52,7 +54,6 @@ def get_engineer_third_ipc():
 @engineer_bp.route("/get_engineer/<ipc_id>")
 def get_engineer(ipc_id):
     # 获取ipc分类的工程师以及所在的企业
-    ipc_id = ipc_id.replace("$", "/")
     length = len(ipc_id)
     if length > 4 or length < 1:
         # TODO
@@ -65,9 +66,14 @@ def get_engineer(ipc_id):
 
     engineer_list = engineer_service.get_engineer_group_by_ipc(depth=depth,
                                                                ipc_code=ipc_id,
-                                                               town="开发区")
+                                                               town="开发区",
+                                                               limit=500)
+    excel.init_excel(current_app._get_current_object())
+
+    data = [(item["en_name"], item["engineer_name"]) for item in engineer_list]
+    return excel.make_response_from_array(data, "csv", "result")
     # TODO
-    return render_template("engineer_group/patent_engineer.html", engineer_list=engineer_list, ipc_id=ipc_id)
+    # return jsonify(engineer_list)
 
 
 def get_engineer_count(depth=0, town='开发区'):
