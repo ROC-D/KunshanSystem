@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, abort, redirect, url_for, jsonify, current_app
+from flask import Blueprint, render_template, request, abort,\
+                redirect, url_for, jsonify, current_app, make_response
 from web.service import en_patent_service as engineer_service
-import flask_excel as excel
-
+import pandas as pd
+import io
 
 engineer_bp = Blueprint('engineer', __name__)
 
@@ -68,10 +69,24 @@ def get_engineer(ipc_id):
                                                                ipc_code=ipc_id,
                                                                town="开发区",
                                                                limit=500)
-    excel.init_excel(current_app._get_current_object())
+    engineer_dict = [
+        {"企业名": item["en_name"], "工程师名": item["engineer_name"]}
+        for item in engineer_list
+    ]
+    data = pd.DataFrame(engineer_dict)
+    # print(data)
 
-    data = [(item["en_name"], item["engineer_name"]) for item in engineer_list]
-    return excel.make_response_from_array(data, "csv", "result")
+    out = io.BytesIO()
+    writer = pd.ExcelWriter(out, engine='xlsxwriter')
+    data.to_excel(excel_writer=writer, index=False, sheet_name='工程师分组')
+    writer.save()
+    writer.close()
+
+    response = make_response(out.getvalue())
+    response.headers["Content-Disposition"] = "attachment; filename=Engineer_group.xlsx"
+    response.headers["Content-type"] = "application/x-xls"
+
+    return response
     # TODO
     # return jsonify(engineer_list)
 
