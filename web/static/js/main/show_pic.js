@@ -1,4 +1,4 @@
-let myChart = echarts.init(document.getElementById("main"));
+myChart = echarts.init(document.getElementById("main"));
 myChart.showLoading();
 
 //获取当前选中的层级
@@ -8,8 +8,9 @@ let data = {
 }
 
 if (typeof $('#cur_level').val() != "undefined"){
-    data['level'] = parseInt($('#cur_level').val());
-    data['type'] = $('#cur_level').text().trim();
+    data['level'] = parseInt($('#cur_level').attr("value"));
+    // data['type'] = $('#cur_level').text().trim();
+    data['type'] = $('li.dropdown>a').text().trim();
 }
 
 if (typeof $('#cur_level').data("id") != "undefined"){
@@ -23,6 +24,7 @@ $.ajax({
     data: data,
     dataType: "json",
     success: function (json_data) {
+        console.log(data);
         if (json_data['status'] != 'ok') {
             console.log('获取数据失败', json_data);
             return false;
@@ -68,7 +70,8 @@ function setPieOption(json_data) {
 
 let pieOption = {
     title: {
-        text: '昆山开发区企业知识产权分布',
+        text: '',
+        subtext:"",
         left: 'center'
     },
     tooltip: {
@@ -104,8 +107,8 @@ let pieOption = {
 };
 
 //---------------
-let NAME_ID_MAPPING = []
-var seriesLabel = {
+NAME_ID_MAPPING = []
+seriesLabel = {
     normal: {
         show: true,
         textBorderColor: '#333',
@@ -118,6 +121,7 @@ function setBarOption(json_data){
     let xAxis = [];
     let data = [];
     let bar_info = json_data.data;
+    // console.log(json_data)
     for (let i = 0; i < bar_info.length; i++){
         let datum = bar_info[i];
         xAxis.push(datum.name);
@@ -127,11 +131,22 @@ function setBarOption(json_data){
     barOption.xAxis.data = xAxis;
     barOption.series[0].data = data;
     barOption.legend.data = xAxis;
+
+    // 横纵坐标名称
+    barOption.xAxis.name = json_data.xAxis_name;
+    barOption.yAxis.name = json_data.yAxis_name;
+    // 正副标题
+    barOption.title.text = json_data.title;
+    barOption.title.subtext = json_data.subtext;
+
     myChart.hideLoading();
     myChart.setOption(barOption);
 }
 
 barOption = {
+    title: {
+      left: "center"
+    },
     tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -172,26 +187,14 @@ barOption = {
 
 //添加事件
 myChart.on('click', function (params) {
-    console.log(params);
+    // console.log(params);
     //获取到绑定的数据
-    let data = params.data;
-
-    if(params.seriesType == "pie"){
-        if (!data.click2){
-            toggle_alert(false, "不能继续下钻");
-        }else {
-            let url = '/pie?level=' + data.click2;
-            console.log(data)
-            if (data.property_type !== undefined) {
-                url += "&type=" + data.property_type;
-            }
-            // alert(url)
-            window.location = url;
-        }
-    }
-    else if(params.seriesType == "bar"){
+    if(params.seriesType == "bar"){
         let com_id = NAME_ID_MAPPING[params.name];
-        let url = `/pie?level=3&com_id=${com_id}&name=${params.name}`;
+
+        let url = `/pie?level=3&id=${com_id}&name=${params.name}`;
+
+        // console.log(url);
         window.location = url;
     }
 });

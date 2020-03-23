@@ -26,7 +26,7 @@ def show_bar(depth):
         "engineers": engineers,
         "title": "昆山开发区企业技术领域分布",
         "xAxis_name": "技术领域",
-        "yAxis_name": "企业数量"
+        "yAxis_name": "数量"
     }
     return render_template('main/show_bar.html', ancestors=ancestors, depth=depth, counter=counter)
 
@@ -37,23 +37,24 @@ def show_pic():
     level = request.args.get("level")
     level = 0 if not level else int(level)
 
-    ancestors = getAncestors(level)
+    type = "1"
+
+    ancestors = getAncestors()
 
     if 2 == level:
         type = request.args.get("type")
-        type = '发明专利' if not type else type
 
-        ancestors = getAncestors(level=2, property_type=type)
-
-        return render_template("main/company_property_sort.html", ancestors=ancestors)
+        return render_template("main/company_property_sort.html", ancestors=ancestors, depth=level, type=type)
 
     if 3 == level:
         com_name = request.args.get("name")
-        com_id = request.args.get("com_id")
-        ancestors = getAncestors(level=3, com_id=com_id, com_name=com_name)
+        com_id = request.args.get("id")
+        type = request.args.get("type")
+        ancestors = getAncestors(com_id=com_id, com_name=com_name)
         # print(ancestors)
+        type = "1" if not type else type
 
-    return render_template('main/show_pic.html', ancestors=ancestors)
+    return render_template('main/show_pic.html', ancestors=ancestors, depth=level, type=type)
 
 
 @main_bp.route('/pie_data')
@@ -75,6 +76,7 @@ def get_pie_data():
 
     elif '3' == level:
         com_id = request.args.get("id")
+        print("com_id: ", com_id)
         return companyProperty(com_id)
 
     return jsonify({"status": "error level"})
@@ -142,7 +144,7 @@ def companyPropertySequence(town="开发区", property_type='发明专利'):
     return jsonify({
         "data": data,
         "bar_graph": True,
-        "title": "企业拥有 %s 数量排名" % key,
+        "title": "拥有 %s 的企业排名" % property_type,
         "xAxis_name": "企业名",
         "yAxis_name": "数量/件",
         "status": "ok"
@@ -165,22 +167,17 @@ def companyProperty(com_id):
     return format_property_data(data)
 
 
-def getAncestors(level, property_type="", com_name="", com_id=0):
+def getAncestors(com_name="", com_id=0):
     # 用于显示面包屑导航栏
-    ancestors = []
-    if 0 <= level:
-        ancestors.append({"level": 0, "key": "企业分布"})
-    if 1 <= level:
-        ancestors.append({
-            "level": 1,
-            "key": "知识产权分布"
-        })
-    if 2 <= level:
-        ancestors.append({
-            "level": 2,
-            "key": property_type
-        })
-    if 3 <= level:
+    ancestors = [
+        {"level": 0, "key": "企业分布"},
+        {"level": 1, "key": "知识产权分布"},
+        {"level": 2, "list": {
+            "1": "发明专利", "2": "实用新型专利", "3": "外观设计", "4": "软件著作权"
+            }
+        }
+    ]
+    if com_name:
         ancestors.append({
             "level": 3,
             "key": com_name,
