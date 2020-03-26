@@ -1,8 +1,5 @@
 from flask import Blueprint
 
-enterprise_patent_bp = Blueprint('enterprise_patent', __name__)
+intellectual_property_bp = Blueprint('intellectual_property', __name__)
 
 
-@enterprise_patent_bp.route('/get')
-def get():
-    pass
