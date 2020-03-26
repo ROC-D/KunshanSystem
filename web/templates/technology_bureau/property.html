@@ -58,9 +58,7 @@
                                     </span> -->
                                 </div>
                                 <div class="col-auto">
-
-                                    <!-- Icon -->
-                                    <span class="h2 fe fe-dollar-sign text-muted mb-0"></span>
+                                    <span class="h2 fe fe-trending-up text-muted mb-0"></span>
 
                                 </div>
                             </div> <!-- / .row -->
@@ -69,7 +67,6 @@
 
                 </div>
                 <div class="col-12 col-lg-6 col-xl">
-                    <!-- Hours -->
                     <div class="card">
                         <div class="card-body">
                             <div class="row align-items-center">
@@ -89,7 +86,7 @@
                                 <div class="col-auto">
 
                                     <!-- Icon -->
-                                    <span class="h2 fe fe-briefcase text-muted mb-0"></span>
+                                    <span class="h2 fe fe-key text-muted mb-0"></span>
 
                                 </div>
                             </div> <!-- / .row -->
@@ -97,7 +94,6 @@
                     </div>
                 </div>
                 <div class="col-12 col-lg-6 col-xl">
-                    <!-- Exit -->
                     <div class="card">
                         <div class="card-body">
                             <div class="row align-items-center">
@@ -115,12 +111,7 @@
 
                                 </div>
                                 <div class="col-auto">
-
-                                    <!-- Chart -->
-                                    <div class="chart chart-sparkline">
-                                        <div class="chart-canvas" id="sparklineChart"></div>
-                                    </div>
-
+                                    <span class="h2 fe fe-layout text-muted mb-0"></span>
                                 </div>
                             </div> <!-- / .row -->
                         </div>
@@ -128,14 +119,10 @@
 
                 </div>
                 <div class="col-12 col-lg-6 col-xl">
-
-                    <!-- Time -->
                     <div class="card">
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col">
-
-                                    <!-- Title -->
                                     <h6 class="text-uppercase text-muted mb-2">
                                         其他
                                     </h6>
@@ -147,9 +134,8 @@
 
                                 </div>
                                 <div class="col-auto">
-
                                     <!-- Icon -->
-                                    <span class="h2 fe fe-clock text-muted mb-0"></span>
+                                    <span class="h2 fe fe-slack text-muted mb-0"></span>
 
                                 </div>
                             </div> <!-- / .row -->
@@ -195,14 +181,30 @@
                             <h4 class="card-header-title">
                                 专利分布
                             </h4>
-
+                             <!-- Tabs -->
+                            <ul class="nav nav-tabs nav-tabs-sm card-header-tabs">
+                              <li class="nav-item" data-toggle="chart" data-target="#patentDistributionChart" data-trigger="click" data-action="toggle" data-dataset="0">
+                                <a href="#" class="nav-link active" data-toggle="tab">
+                                  部
+                                </a>
+                              </li>
+                              <li class="nav-item" data-toggle="chart" data-target="#patentDistributionChart" data-trigger="click" data-action="toggle" data-dataset="1">
+                                <a href="#" class="nav-link" data-toggle="tab">
+                                  大类
+                                </a>
+                              </li>
+                                <li class="nav-item" data-toggle="chart" data-target="#patentDistributionChart" data-trigger="click" data-action="toggle" data-dataset="1">
+                                <a href="#" class="nav-link" data-toggle="tab">
+                                  小类
+                                </a>
+                              </li>
+                            </ul>
                         </div>
                         <div class="card-body remove-padding">
 
                             <!-- Chart -->
                             <div class="chart">
-                                <div id="trafficChart" class="chart-canvas" data-toggle="legend"
-                                    data-target="#trafficChartLegend"></div>
+                                <div id="patentDistributionChart" class="chart-canvas" data-toggle="legend" data-target="#trafficChartLegend"></div>
                             </div>
 
                         </div>

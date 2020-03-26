@@ -67,15 +67,7 @@ lineOption = {
         trigger: 'axis',
         axisPointer: {
             type: 'shadow'
-        },
-        // formatter: function (param) {
-        //     // console.log(param);
-        //     result = `${param[0].name}`;
-        //     for(let i = 0; i < param.length; i++){
-        //         result += `<br>${param[i].seriesName}, 完成度: ${param[i].data}%`;
-        //     }
-        //     return result;
-        // }
+        }
     },
     xAxis: {
         type: 'category',
@@ -178,8 +170,8 @@ let conversionsChart = getEchartObj("conversionsChart");
 setOption(conversionsChart, barOption, TEST_BAR_DATA);
 
 
-let trafficChart = getEchartObj("trafficChart");
-setPieOption(trafficChart, pieOption, TEST_PIE_DATA);
+let patentDistributionChart = getEchartObj("patentDistributionChart");
+setPieOption(patentDistributionChart, pieOption, TEST_PIE_DATA);
 
 
 let propertyTypeChart = getEchartObj("propertyTypeChart");
