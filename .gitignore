@@ -4,6 +4,7 @@
 .idea
 __pycache__/
 venv/
+env/
 
 web/config.py
 
