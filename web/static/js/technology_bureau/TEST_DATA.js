@@ -47,7 +47,7 @@ TEST_PIE_DATA = {
         {value: 135, name: '其他'}
     ],
     legend:["H", "B", "D", "C", "A", "E", "F", "G", "其他" ]
-}
+};
 
 
 TEST_PIE_DATA_2 = {

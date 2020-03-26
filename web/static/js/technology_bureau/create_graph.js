@@ -171,7 +171,7 @@ setOption(conversionsChart, barOption, TEST_BAR_DATA);
 
 
 let patentDistributionChart = getEchartObj("patentDistributionChart");
-setPieOption(patentDistributionChart, pieOption, TEST_PIE_DATA);
+//setPieOption(patentDistributionChart, pieOption, TEST_PIE_DATA);
 
 
 let propertyTypeChart = getEchartObj("propertyTypeChart");
