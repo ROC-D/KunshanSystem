@@ -289,7 +289,7 @@ let conversionsChart = getEchartObj("conversionsChart");
 
 
 let patentDistributionChart = getEchartObj("patentDistributionChart");
-setPieOption(patentDistributionChart, pieOption, TEST_PIE_DATA);
+//setPieOption(patentDistributionChart, pieOption, TEST_PIE_DATA);
 
 
 let completionRateChart = getEchartObj("completionRateChart");

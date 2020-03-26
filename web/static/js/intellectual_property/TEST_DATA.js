@@ -49,6 +49,17 @@ TEST_PIE_DATA = {
     legend:["H", "B", "D", "C", "A", "E", "F", "G", "其他" ]
 };
 
+TEST_PIE_DATA_2 = {
+    seriesName: "知识产权类型",
+    series: [
+        {value: 11774, name: '发明专利'},
+        {value: 11514, name: '实用新型专利'},
+        {value: 6584, name: "外观设计"},
+        {value: 13500, name: '其他'}
+    ],
+    legend:["发明专利", "实用新型专利", "外观设计", "其他" ]
+}
+
 
 TEST_BAR_DATA = { series: [
         {   name:"发明专利",
