@@ -4,8 +4,6 @@
 import os
 import sys
 import pprint
-from web.utils import db
-from web.config import MYSQL_CONFIG
 from web.dao import intellectual_property
 from web.dao.intellectual_property import get_patent_number_by_type
 from web.CONST_DICT import PATENT_TYPE
