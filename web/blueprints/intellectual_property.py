@@ -8,7 +8,7 @@ intellectual_property_bp = Blueprint('intellectual_property', __name__)
 @intellectual_property_bp.route("/index")
 @intellectual_property_bp.route("/property")
 def index():
-    return render_template("intellectual_property.py/index.html")
+    return render_template("intellectual_property/index.html")
 
 
 @intellectual_property_bp.route("/get_different_patent_type_count")
@@ -19,3 +19,12 @@ def get_different_patent_type_count():
     back = intellectual_property.get_different_patent_type_count(town)
 
     return jsonify(back)
+
+
+@intellectual_property_bp.route('/get_patent_number_by_type_year', )
+def get_patent_number_by_type_year():
+    """
+    按专利类型和时间获取不同地区近五年的专利数量统计
+    """
+    outcome_dict = intellectual_property.get_patent_number_by_type_and_year()
+    return outcome_dict
