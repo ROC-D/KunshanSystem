@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    首页
+{% endblock %}
+
+{% block main %}
+    <div id="container1" style="height: 10%">
+        <ul class="breadcrumb">
+            <li><a >部</a></li>&nbsp;&nbsp;/&nbsp;&nbsp;
+            <li><a href="javascript:void(0);" onclick="second_ipc()">大类</a></li>&nbsp;&nbsp;/&nbsp;&nbsp;
+            <li><a href="javascript:void(0);" onclick="third_ipc()">小类</a></li>&nbsp;&nbsp;
+        </ul>
+    </div>
+    <div id="main" style="height: 600px">
+   </div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main/show_bar.js') }}"></script>
+
+    <script type="text/javascript">
+        const dom = document.getElementById("main");
+        //用于使chart自适应高度和宽度,通过窗体高宽计算容器高宽
+        let resizeWorldMapContainer = function () {
+            dom.style.width = window.innerWidth - 10-+'px';
+            dom.style.height = window.innerHeight - 80+'px';
+        };
+        //设置容器高宽
+        resizeWorldMapContainer();
+
+        $(document).ready(function(){
+            root_ipc();
+        });
+
+        function root_ipc() {
+            ajax_get_data("/engineer/init_bar")
+        }
+
+        function second_ipc(){
+            ajax_get_data("/engineer/second_ipc");
+        }
+        function third_ipc(){
+            ajax_get_data("/engineer/third_ipc");
+        }
+        function ajax_get_data(url){
+           myChart.showLoading({
+                　　text : '加载中',
+                　　effect : 'whirling'
+                });
+           $.ajax({
+                type: "get",
+                url: url,
+                dataType: "json",
+                success: function (json_data) {
+                    if (json_data['status'] != 'ok') {
+                        console.log('获取数据失败');
+                        return false;
+                    }
+                    setBarOption(json_data);
+
+                },
+                error: function (error) {
+                    console.error(error)
+                }
+            });
+        }
+
+    </script>
+
+{% endblock %}
+
+
+
+
