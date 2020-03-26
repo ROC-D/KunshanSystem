@@ -235,7 +235,7 @@ console.log("ready");
 $.ajax({
     datatype: "json",
     type: "get",
-    url: '/property/get_patent_number_by_type_year',
+    url: '/get_patent_number_by_type_year',
     success: function (data) {
         year_list = data["year_list"];
         patent_dict = data["patent_dict"];

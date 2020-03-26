@@ -21,7 +21,7 @@ def get_different_patent_type_count():
     return jsonify(back)
 
 
-@intellectual_property_bp.route('/get_patent_number_by_type_year', )
+@intellectual_property_bp.route('/get_patent_number_by_type_year')
 def get_patent_number_by_type_year():
     """
     按专利类型和时间获取不同地区近五年的专利数量统计
