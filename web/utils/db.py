@@ -80,6 +80,7 @@ def _select(sql, first, *args):
             return results
     except Exception as e:
         print(e)
+        return None
     finally:
         cursor.close()
         connection.close()
