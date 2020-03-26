@@ -4,6 +4,7 @@ from flask import Flask, render_template
 from web.settings import configuration
 from web.blueprints.main import main_bp
 from web.blueprints.engineer_group import engineer_bp
+from web.blueprints.technology_bureau import technology_bureau_bp
 from web.extensions import bootstrap
 from web.utils import db
 from web.config import MYSQL_CONFIG
@@ -44,8 +45,9 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    app.register_blueprint(main_bp)
+    app.register_blueprint(main_bp, url_prefix="/main")
     app.register_blueprint(engineer_bp, url_prefix="/engineer")
+    app.register_blueprint(technology_bureau_bp, url_prefix="/")
 
 
 def register_errors(app):
