@@ -2,7 +2,6 @@ import os
 from flask import Flask, render_template
 
 from web.settings import configuration
-from web.blueprints.technology_bureau import technology_bureau_bp
 from web.blueprints.intellectual_property import intellectual_property_bp
 from web.extensions import bootstrap
 from web.utils import db
@@ -44,8 +43,7 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    app.register_blueprint(technology_bureau_bp, url_prefix="/")
-    app.register_blueprint(intellectual_property_bp, url_prefix="/property")
+    app.register_blueprint(intellectual_property_bp, url_prefix="/")
 
 
 def register_errors(app):

@@ -221,16 +221,14 @@
 		              <div class="card-header">
 		                <!-- Title -->
 		                <h4 class="card-header-title">
-		                  知识产权类型
+		                  完成情况
 		                </h4>
-
-
 		              </div>
 		              <div class="card-body remove-padding">
 
 		                <!-- Chart -->
 		                <div class="chart">
-		                  <div id="propertyTypeChart" class="chart-canvas" data-toggle="legend"></div>
+		                  <div id="completionRateChart" class="chart-canvas" data-toggle="legend"></div>
 		                </div>
 		              </div>
 		            </div>
@@ -431,7 +429,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('static', filename='js/technology_bureau/TEST_DATA.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/technology_bureau/create_graph.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/technology_bureau/event.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/intellectual_property/TEST_DATA.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/intellectual_property/create_graph.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/intellectual_property/event.js') }}"></script>
 {% endblock %}
