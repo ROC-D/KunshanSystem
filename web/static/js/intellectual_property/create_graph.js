@@ -125,6 +125,31 @@ pieOption = {
 };
 
 
+gaugeOption = {
+      tooltip: {
+        formatter: '{a} <br/>{b} : {c}%'
+    },
+    series: [
+        {
+            name: '业务指标',
+            type: 'gauge',
+            detail: {formatter: '{value}%'},
+            data: [{value: 10.5, name: '完成率'}],
+            axisLine:{
+                lineStyle:{
+                    color: [[0.2, "#fdae6b"], [0.8, "#2c7be5"], [1, '#31a354']],
+                    width: 10,
+                    shadowColor: '#fff', //默认透明: 10
+                }
+            },
+            splitLine: {           // 分隔线
+                length: 10,         // 属性length控制线长
+            }
+        }
+    ],
+
+};
+
 function setOption(chart, option, data={}){
     option.title.text=data.title;
     option.legend.data=data.legend;
@@ -174,8 +199,9 @@ let patentDistributionChart = getEchartObj("patentDistributionChart");
 setPieOption(patentDistributionChart, pieOption, TEST_PIE_DATA);
 
 
-let propertyTypeChart = getEchartObj("propertyTypeChart");
-setPieOption(propertyTypeChart, pieOption, TEST_PIE_DATA_2);
+let completionRateChart = getEchartObj("completionRateChart");
+gaugeOption.series[0].data = TEST_GAUGE_DATA.series;
+completionRateChart.setOption(gaugeOption);
 
 
 

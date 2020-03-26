@@ -47,19 +47,7 @@ TEST_PIE_DATA = {
         {value: 135, name: '其他'}
     ],
     legend:["H", "B", "D", "C", "A", "E", "F", "G", "其他" ]
-}
-
-
-TEST_PIE_DATA_2 = {
-    seriesName: "知识产权类型",
-    series: [
-        {value: 11774, name: '发明专利'},
-        {value: 11514, name: '实用新型专利'},
-        {value: 6584, name: "外观设计"},
-        {value: 13500, name: '其他'}
-    ],
-    legend:["发明专利", "实用新型专利", "外观设计", "其他" ]
-}
+};
 
 
 TEST_BAR_DATA = { series: [
@@ -79,6 +67,11 @@ TEST_BAR_DATA = { series: [
         }
     ],
     xAxis: [ 2016, 2017, 2018, 2019, 2020],
-    yAxis: "数量",
+    yAxisName: "数量",
     legend: ["发明专利", "实用新型专利",  "外观设计", "其他"]
+};
+
+
+TEST_GAUGE_DATA = {
+    series: [{value: 10.5, name: "完成率"}]
 }
