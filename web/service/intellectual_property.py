@@ -3,12 +3,18 @@
 """
 import os
 import sys
-import pprint
 import web.dao.intellectual_property as property_dao
 from web.CONST_DICT import PATENT_TYPE
 
 
 sys.path.append(os.getcwd())
+
+
+def return_error(errroMsg=""):
+    """
+    返回 dict 格式的报错
+    """
+    return {"error": True, "errorMsg": errroMsg}
 
 
 def get_different_patent_type_count(town='开发区'):
@@ -20,16 +26,16 @@ def get_different_patent_type_count(town='开发区'):
         patent_type_name: patent_count
     }
     """
+    # ==> [{"type":1, "count": 123}]
+    patent_type = PATENT_TYPE
     data = property_dao.get_different_patent_type_count(town)
     if data is None:
-        return {"error": True, "errorMsg": "获取数据失败，检查区镇名"}
+        return return_error(errroMsg="获取数据失败，检查区镇名")
 
-    result = {}
-    for item in data:
-        key = PATENT_TYPE[4] if item["type"] not in PATENT_TYPE else PATENT_TYPE[item["type"]]
-        result[key] = item["count"]
-
-    return result
+    return {
+        patent_type[item["type"]]: item["count"]
+        for item in data
+    }
 
 
 def get_patent_number_by_type_and_year(area="开发区"):
@@ -92,11 +98,8 @@ def get_patent_number_by_type_and_year(area="开发区"):
             return_dict["其他专利"].append(patent_dict[year]["其他专利"])
         else:
             return_dict["其他专利"].append(0)
-    print(pprint.pformat(return_dict))
 
     return {"year_list": year_list, "patent_dict": return_dict}
-
-
 
 
 def count_patents_with_ipc(depth, limit=20):
