@@ -45,7 +45,7 @@ def get_patent_number_by_type_and_year(area="开发区"):
     return: 1. 年份列表：
                     [2015, 2016, 2017, 2018, 2019]
             2. 每年对应的不同种类的专利数量：
-                {'其他专利': [7, 8, 18, 3, 0],
+                {'其他知识产权': [7, 8, 18, 3, 0],
                  '发明专利': [353, 835, 844, 1094, 899],
                  '外观设计': [0, 0, 0, 0, 0],
                  '实用新型': [595, 744, 1241, 1489, 353]}
@@ -54,8 +54,8 @@ def get_patent_number_by_type_and_year(area="开发区"):
         "1": "发明专利",
         "2": "实用新型",
         "3": "外观设计",
-        "8": "其他专利",
-        "9": "其他专利",
+        "8": "其他知识产权",
+        "9": "其他知识产权",
     }
     outcome_list = property_dao.get_patent_number_by_type(area)
     patent_dict = {}
@@ -77,28 +77,14 @@ def get_patent_number_by_type_and_year(area="开发区"):
         "发明专利": [],
         "实用新型": [],
         "外观设计": [],
-        "其他专利": [],
+        "其他知识产权": [],
     }
     for year in year_list:
-        if "发明专利" in patent_dict[year]:
-            return_dict["发明专利"].append(patent_dict[year]["发明专利"])
-        else:
-            return_dict["发明专利"].append(0)
-
-        if "实用新型" in patent_dict[year]:
-            return_dict["实用新型"].append(patent_dict[year]["实用新型"])
-        else:
-            return_dict["实用新型"].append(0)
-
-        if "外观设计" in patent_dict[year]:
-            return_dict["外观设计"].append(patent_dict[year]["外观设计"])
-        else:
-            return_dict["外观设计"].append(0)
-
-        if "其他专利" in patent_dict[year]:
-            return_dict["其他专利"].append(patent_dict[year]["其他专利"])
-        else:
-            return_dict["其他专利"].append(0)
+        for key in return_dict.keys():
+            if key in patent_dict[year]:
+                return_dict[key].append(patent_dict[year][key])
+            else:
+                return_dict[key].append(0)
 
     return {"year_list": year_list, "patent_dict": return_dict}
 
@@ -140,8 +126,27 @@ def count_patents_with_ipc(depth, limit=20):
     for result in results:
         count += result['amount']
         result['title'] = ipc_title_mapping[result['code']]
-    # 得到其他专利数量
+    # 得到其他知识产权数量
     total = property_dao.get_total_patent_number()
     results.append({'code': '其他', 'amount': total - count, 'title': '其他类别的所有专利'})
 
     return results
+
+
+def update_year_target(department_id, data):
+    """
+    用户更新年度目标
+    """
+    if 0 == len(data):
+        return return_error("无参数")
+    result = False
+    for target_name, content in data.items():
+        if "id" in content:
+            back = property_dao.update_year_target(content["id"], content["value"])
+        else:
+            year = datetime.datetime.now().year
+            back = property_dao.insert_year_target(target_name, content["value"], year, department_id)
+        result = result or back
+    if result:
+        return {"success": True}
+    return return_error("修改失败")

@@ -1,4 +1,7 @@
 import pytest
+import sys
+import os
+sys.path.append(os.getcwd())
 from web.dao.intellectual_property import *
 
 

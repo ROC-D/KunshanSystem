@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from web.service import intellectual_property as property_service
+import json
 
 intellectual_property_bp = Blueprint('intellectual_property', __name__)
 
@@ -41,3 +42,13 @@ def get_this_year_target():
 def get_patent_counts_with_depth(depth):
     results = property_service.count_patents_with_ipc(depth=depth, limit=7)
     return jsonify(results)
+
+
+@intellectual_property_bp.route('/update_year_target', methods=['POST'])
+def update_year_target():
+    """
+    更新年度目标
+    """
+    department_id = request.form.get("department_id")
+    data = json.loads(request.form.get("data"))
+    return property_service.update_year_target(department_id, data)

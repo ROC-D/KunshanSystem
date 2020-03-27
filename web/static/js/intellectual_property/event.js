@@ -38,23 +38,28 @@ $("a[data-toggle='tab']").on("click", function (e) {
 });
 
 $("#submit-year-target").on("click", function (e) {
-	let data = [], $target;
+	let data = {}, $target;
 	for(let k in YEAR_GOAL){
 		$target = $("#".concat(k));
-		YEAR_GOAL[k] = $target.val();
-		let id = $target.data("id");
-		let target_data = {"value": YEAR_GOAL[k],"key":  $target.attr("data-name")};
-		if(id){
-			target_data["id"] = id;
+		let value = $target.val();
+		if(YEAR_GOAL[k] == value){
+			continue;
+		}else{
+			YEAR_GOAL[k] = value;
 		}
 
-		data.push(target_data);
+		let id = $target.data("id");
+		let name = $target.attr("data-name");
+		data[name] = {"value": YEAR_GOAL[k]};
+		if(id){
+			data[name]["id"] = id;
+		}
 	}
-	let sendData = {"department_id": 1, "data": data};
+
 	$.ajax({
 		type: "POST",
 		url: "/update_year_target",
-		data: sendData,
+		data: {"department_id": 1, "data": JSON.stringify(data)},
 		dataType:"json",
 		success: function (json_data) {
 			if(json_data.error){
@@ -106,7 +111,6 @@ function get_patent_number_by_type_year() {
 		success: function (data) {
 			let year_list = data["year_list"];
 			let patent_dict = data["patent_dict"];
-
 			add_this_year_target(year_list, patent_dict);
 			let serise = [], legend = [];
 			for(let typeName in patent_dict){

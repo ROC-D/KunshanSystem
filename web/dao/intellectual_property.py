@@ -3,10 +3,9 @@
 """
 import os
 import sys
-from web.utils import db
-
-
 sys.path.append(os.getcwd())
+from web.utils import db
+import datetime
 
 
 def get_different_patent_type_count(town="开发区"):
@@ -89,3 +88,16 @@ def count_patents_with_ipc(length, ipc_list, limit=20):
     sql = sql_format.format(length=length, in_=','.join(in_), limit=limit)
     # 查询，并返回dict的数据
     return db.select(sql)
+
+
+def update_year_target(id, numbers):
+    """
+    用户更新年度目标
+    """
+    sql = "update target set numbers=? where id=?"
+    return db.update(sql, numbers, id)
+
+
+def insert_year_target(target_name, numbers, year, department_id):
+    sql = "insert into target(target_name, numbers, year, department_id) values('?',?,?,?)"
+    return db.insert(sql, target_name, numbers, year, department_id)
