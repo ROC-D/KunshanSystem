@@ -95,7 +95,28 @@ lineOption = {
 pieOption = {
     tooltip: {
         trigger: 'item',
-        formatter: '{a} <br/>{b}: {c} ({d}%)'
+        formatter: function (param) {
+            let code = param.name;
+            let title = param.data.title;
+            let value = param.value;
+            let percent = param.percent;
+
+            if (title.length > 50){
+                let title_list = title.split("；");
+                title = "<ul>";
+                for(let i = 0; i < title_list.length; i++){
+                    if(title_list[i].length > 30){
+                        title_list[i] = title_list[i].substring(0, 30) + "...";
+                    }
+                    title += `<li>${title_list[i]}</li>`;
+                }
+                title += "</ul>";
+            }
+            else{
+                title += "<br>";
+            }
+            return `${code}：${value} (${percent}%)<br>${title}`;
+        }
     },
     legend: {
         type: "scroll",

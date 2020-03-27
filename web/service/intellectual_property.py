@@ -113,17 +113,22 @@ def count_patents_with_ipc(depth, limit=20):
     if depth >= 3:
         return return_error('invalid value of depth')
     # 根据深度获取到对应的IPC
-    ipc_map = property_dao.get_ipc_map(depth)
-    ipc_list = [ipc['ipc_id'] for ipc in ipc_map]
-    length = len(ipc_list[0])
+    ipc_results = property_dao.get_ipc_map(depth)
+    # 存储IPC 存储IPC和对应的描述
+    ipc_list, ipc_title_mapping = [], {}
+    for ipc in ipc_results:
+        ipc_list.append(ipc['ipc_id'])
+        ipc_title_mapping[ipc['ipc_id']] = ipc['ipc_content']
     # 获取前若干个
+    length = len(ipc_list[0])
     results = property_dao.count_patents_with_ipc(length, ipc_list, limit)
-    # 统计当前数量
+    # 统计当前数量，并添加描述
     count = 0
     for result in results:
         count += result['amount']
+        result['title'] = ipc_title_mapping[result['code']]
     # 得到其他专利数量
     total = property_dao.get_total_patent_number()
-    results.append({'code': '其他', 'amount': total - count})
+    results.append({'code': '其他', 'amount': total - count, 'title': '其他类别的所有专利'})
 
     return results
