@@ -178,7 +178,6 @@ gaugeOption = {
 };
 
 function set_option(chart, option, data={}){
-    chart.showLoading();
     option.title.text=data.title;
     option.legend.data=data.legend;
     option.xAxis.data=data.xAxis;
@@ -191,7 +190,6 @@ function set_option(chart, option, data={}){
 
 
 function set_pie_option(chart, option, data={}) {
-    chart.showLoading();
     option.legend.data = data.legend;
 
     if(data.seriesName){

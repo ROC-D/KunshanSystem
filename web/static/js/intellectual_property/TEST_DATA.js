@@ -2,7 +2,7 @@
 TEST_LINE_DATA = {
     series: [
         {   name:"三螺旋大数据科技(昆山)有限公司",
-            data: [23, 24, 25, 26, 27, 28, 29], type: 'line', 
+            data: [23, 24, 25, 26, 27, 28, 29], type: 'line',
             smooth: true, show:true,
             lineStyle:{width:3}
         },
@@ -58,7 +58,7 @@ TEST_PIE_DATA_2 = {
         {value: 13500, name: '其他'}
     ],
     legend:["发明专利", "实用新型专利", "外观设计", "其他" ]
-}
+};
 
 
 TEST_BAR_DATA = { series: [
@@ -81,6 +81,24 @@ TEST_BAR_DATA = { series: [
     yAxisName: "数量",
     legend: ["发明专利", "实用新型专利",  "外观设计", "其他"]
 };
+
+
+TEST_BAR_DATA_2  = {
+    series: [
+        {   name:"2019",
+            data: [50, 93, 56, 65], type: 'bar',
+            barWidth: 10,
+        },
+        {   name:"2020",
+            data: [42, 52, 62, 11], type: 'bar',
+            barWidth: 10,
+        },
+    ],
+    legend: [ "2019", "2020"],
+    xAxis: ["1月", "2月", "3月", "4月"],
+    yAxis: "数量",
+};
+
 
 
 TEST_GAUGE_DATA = {
