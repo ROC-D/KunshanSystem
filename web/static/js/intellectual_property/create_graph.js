@@ -91,6 +91,7 @@ lineOption = {
 
 
 
+//专利分布饼图 option
 pieOption = {
     tooltip: {
         trigger: 'item',

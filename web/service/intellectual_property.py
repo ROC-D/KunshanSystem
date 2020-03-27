@@ -109,6 +109,9 @@ def count_patents_with_ipc(depth, limit=20):
     :param limit: 限制返回的个数
     :return: [{'code': '', 'amount': 1}, ...]
     """
+    # TODO: 不能超过3类以上
+    if depth >= 3:
+        return return_error('invalid value of depth')
     # 根据深度获取到对应的IPC
     ipc_map = property_dao.get_ipc_map(depth)
     ipc_list = [ipc['ipc_id'] for ipc in ipc_map]
@@ -121,6 +124,6 @@ def count_patents_with_ipc(depth, limit=20):
         count += result['amount']
     # 得到其他专利数量
     total = property_dao.get_total_patent_number()
-    results.append({'code': 'others', 'amount': total - count})
+    results.append({'code': '其他', 'amount': total - count})
 
     return results

@@ -115,11 +115,10 @@ function get_statistical_data_of_patent(depth) {
 				return false;
 			}
 			//转换数据格式
-			let data = json_data['data'];
 			let series = [];
 			let legend = [];
-			for (let i = 0;i < data.length; i++){
-				let datum = data[i];
+			for (let i = 0;i < json_data.length; i++){
+				let datum = json_data[i];
 				series.push({"value": datum.amount, "name": datum.code});
 				legend.push(datum.code);
 			}
@@ -152,7 +151,7 @@ let conversionsChart = get_echart_object("conversionsChart");
 
 
 let patentDistributionChart = get_echart_object("patentDistributionChart");
-set_pie_option(patentDistributionChart, pieOption, TEST_PIE_DATA);
+//set_pie_option(patentDistributionChart, pieOption, TEST_PIE_DATA);
 
 
 let completionRateChart = get_echart_object("completionRateChart");
