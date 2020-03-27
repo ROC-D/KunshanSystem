@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify
-from web.service import intellectual_property
+from web.service import intellectual_property as property_service
 
 intellectual_property_bp = Blueprint('intellectual_property', __name__)
 
@@ -16,7 +16,7 @@ def get_different_patent_type_count():
     town = request.args.get("town")
     town = "开发区" if not town else town
 
-    back = intellectual_property.get_different_patent_type_count(town)
+    back = property_service.get_different_patent_type_count(town)
 
     return jsonify(back)
 
@@ -26,5 +26,16 @@ def get_patent_number_by_type_year():
     """
     按专利类型和时间获取不同地区近五年的专利数量统计
     """
-    outcome_dict = intellectual_property.get_patent_number_by_type_and_year()
+    outcome_dict = property_service.get_patent_number_by_type_and_year()
     return outcome_dict
+
+
+@intellectual_property_bp.route('/count_patents_with_ipc/<int:depth>')
+def get_patent_counts_with_depth(depth):
+    # TODO: 不能超过3类以上
+    if depth >= 3:
+        results = {'status': 'error', 'msg': 'invalid value of depth'}
+    else:
+        data = property_service.count_patents_with_ipc(depth=depth, limit=7)
+        results = {'status': 'ok', 'data': data}
+    return jsonify(results)

@@ -2,12 +2,6 @@ COLOR_LIST = ["#2c7be5","#6baed6", "#9ecae1", "#c6dbef", "#e6550d", "#fd8d3c", "
             "#fdd0a2", "#31a354", "#74c476", "#a1d99b", "#c7e9c0", "#756bb1", "#9e9ac8", 
             "#bcbddc", "#dadaeb", "#636363", "#969696", "#bdbdbd", "#d9d9d9"];
 
-YEAR_GOAL = {
-	"patent": 150,
-	"t2": 180,
-	"t3": 130,
-	"t4": 130
-};
 
 barOption = {
     title:{
@@ -161,7 +155,7 @@ gaugeOption = {
 
 };
 
-function setOption(chart, option, data={}){
+function set_option(chart, option, data={}){
     chart.showLoading();
     option.title.text=data.title;
     option.legend.data=data.legend;
@@ -174,7 +168,7 @@ function setOption(chart, option, data={}){
 }
 
 
-function setPieOption(chart, option, data={}) {
+function set_pie_option(chart, option, data={}) {
     chart.showLoading();
     option.legend.data = data.legend;
 
@@ -190,7 +184,7 @@ function setPieOption(chart, option, data={}) {
 }
 
 
-function setEchartsW_H(id) {
+function set_echarts_W_H(id) {
     let elem = document.getElementById(id);
     elem.style.width = elem.parentElement.clientWidth + "px";
     elem.style.height = elem.parentElement.clientHeight + "px";
@@ -198,7 +192,7 @@ function setEchartsW_H(id) {
 }
 
 
-function getEchartObj(id) {
-    let elem = setEchartsW_H(id);
+function get_echart_object(id) {
+    let elem = set_echarts_W_H(id);
     return echarts.init(elem);
 }

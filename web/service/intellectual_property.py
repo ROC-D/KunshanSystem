@@ -4,8 +4,7 @@
 import os
 import sys
 import pprint
-from web.dao import intellectual_property
-from web.dao.intellectual_property import get_patent_number_by_type
+import web.dao.intellectual_property as property_dao
 from web.CONST_DICT import PATENT_TYPE
 
 
@@ -21,7 +20,7 @@ def get_different_patent_type_count(town='开发区'):
         patent_type_name: patent_count
     }
     """
-    data = intellectual_property.get_different_patent_type_count(town)
+    data = property_dao.get_different_patent_type_count(town)
     if data is None:
         return {"error": True, "errorMsg": "获取数据失败，检查区镇名"}
 
@@ -51,7 +50,7 @@ def get_patent_number_by_type_and_year(area="开发区"):
         "8": "其他专利",
         "9": "其他专利",
     }
-    outcome_list = get_patent_number_by_type(area)
+    outcome_list = property_dao.get_patent_number_by_type(area)
     patent_dict = {}
     year_set = set()
     for d in outcome_list:
@@ -98,3 +97,27 @@ def get_patent_number_by_type_and_year(area="开发区"):
     return {"year_list": year_list, "patent_dict": return_dict}
 
 
+
+
+def count_patents_with_ipc(depth, limit=20):
+    """
+    根据IPC的特征按照专利的主分类号前若干个字符对专利进行统计 并对剩下的数据进行了统计
+    :param depth: 深度
+    :param limit: 限制返回的个数
+    :return: [{'code': '', 'amount': 1}, ...]
+    """
+    # 根据深度获取到对应的IPC
+    ipc_map = property_dao.get_ipc_map(depth)
+    ipc_list = [ipc['ipc_id'] for ipc in ipc_map]
+    length = len(ipc_list[0])
+    # 获取前若干个
+    results = property_dao.count_patents_with_ipc(length, ipc_list, limit)
+    # 统计当前数量
+    count = 0
+    for result in results:
+        count += result['amount']
+    # 得到其他专利数量
+    total = property_dao.get_total_patent_number()
+    results.append({'code': 'others', 'amount': total - count})
+
+    return results
