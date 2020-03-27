@@ -7,7 +7,7 @@ YEAR_GOAL = {
 	"t2": 180,
 	"t3": 130,
 	"t4": 130
-}
+};
 
 barOption = {
     title:{
@@ -162,17 +162,20 @@ gaugeOption = {
 };
 
 function setOption(chart, option, data={}){
+    chart.showLoading();
     option.title.text=data.title;
     option.legend.data=data.legend;
     option.xAxis.data=data.xAxis;
     option.yAxis.name=data.yAxis;
     option.series=data.series;
 
+    chart.hideLoading();
     chart.setOption(option);
 }
 
 
 function setPieOption(chart, option, data={}) {
+    chart.showLoading();
     option.legend.data = data.legend;
 
     if(data.seriesName){
@@ -182,7 +185,7 @@ function setPieOption(chart, option, data={}) {
     if(data.color){
         option.color = data.color;
     }
-
+    chart.hideLoading();
     chart.setOption(option);
 }
 
@@ -199,104 +202,3 @@ function getEchartObj(id) {
     let elem = setEchartsW_H(id);
     return echarts.init(elem);
 }
-
-/*
-用户提交知识产权目标更改时触发该点击事件
- */
-//TODO:
-// var submit_update = document.getElementById("submit_update");
-// submit_update.addEventListener('click', function () {
-//         t1_number = document.getElementById("patent");
-//         t2_number = document.getElementById("t2");
-//         t3_number = document.getElementById("t3");
-//         t4_number = document.getElementById("t4");
-//         // TODO: 将用户更新的目标数据写回数据库
-//         len = patent_dict["发明专利"];
-//         patent_dict["发明专利"][len-1] = t1_number;
-//         patent_dict["实用新型"][len-1] = t1_number;
-//         patent_dict["外观设计"][len-1] = t1_number;
-//         patent_dict["其他专利"][len-1] = t1_number;
-//
-//         //重新加载Bar的数据
-//         setOption(conversionsChart, barOption, BAR_DATA);
-//
-//     }
-//
-// )
-
-
-
-
-let year_list;
-let patent_dict;
-let BAR_DATA;
-console.log("ready");
-
-$.ajax({
-    datatype: "json",
-    type: "get",
-    url: '/get_patent_number_by_type_year',
-    success: function (data) {
-        year_list = data["year_list"];
-        patent_dict = data["patent_dict"];
-
-
-        console.log();
-        construct_patent_type(year_list, patent_dict);
-        BAR_DATA = { series: [
-                {   name:"发明专利",
-                    data: patent_dict["发明专利"], type: 'bar',
-                    barWidth: 10,
-                },{ name: "实用新型",
-                    data: patent_dict["实用新型"], type: 'bar',
-                    barWidth: 10,
-                },{ name: "外观设计",
-                    data: patent_dict["外观设计"], type: 'bar',
-                    barWidth: 10,
-                },{
-                    name: "其他专利",
-                    data: patent_dict["其他专利"], type: 'bar',
-                    barWidth: 10,
-                }
-            ],
-            xAxis: year_list,
-            yAxis: "数量",
-            legend: ["发明专利", "实用新型专利",  "外观设计", "其他"]
-        };
-
-        setOption(conversionsChart, barOption, BAR_DATA);
-    }
-})
-
-
-
-/*
-判断用户是否已经添加今年的目标
- */
-function construct_patent_type(year_list, patent_dict){
-    if(year_list[year_list.length - 1] == 2020){
-        return;
-    }else{
-        year_list.push(2020);
-        patent_dict["发明专利"].push(0);
-        patent_dict["实用新型"].push(0);
-        patent_dict["外观设计"].push(0);
-        patent_dict["其他专利"].push(0);
-    }
-}
-
-let conversionsChart = getEchartObj("conversionsChart");
-
-
-let patentDistributionChart = getEchartObj("patentDistributionChart");
-setPieOption(patentDistributionChart, pieOption, TEST_PIE_DATA);
-
-
-let completionRateChart = getEchartObj("completionRateChart");
-gaugeOption.series[0].data = TEST_GAUGE_DATA.series;
-completionRateChart.setOption(gaugeOption);
-
-
-
-let propertyChart = getEchartObj("propertyChart");
-setOption(propertyChart, lineOption, TEST_LINE_DATA);
