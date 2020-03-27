@@ -106,7 +106,7 @@ def select(sql, *args):
     return _select(sql, False, *args)
 
 
-def _insert(sql, insertMany, args):
+def _insert(sql, insertMany, *args):
     """
     insert语句
     :param sql: SQL语句 内部变量使用?
@@ -148,14 +148,14 @@ def _insert(sql, insertMany, args):
         connection.close()
 
 
-def insert(sql, args):
+def insert(sql, *args):
     """
     执行SQL语句
     :param sql:  insert的SQL语句，可含?
     :param args: insert的SQL语句所对应的值
     :return: 最后插入行的主键ID
     """
-    return _insert(sql, False, args)
+    return _insert(sql, False, *args)
 
 
 def insert_many(sql, *args):

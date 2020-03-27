@@ -3,10 +3,9 @@
 """
 import os
 import sys
-from web.utils import db
-
-
 sys.path.append(os.getcwd())
+from web.utils import db
+import datetime
 
 
 def get_different_patent_type_count(town="开发区"):
@@ -80,3 +79,34 @@ def count_patents_with_ipc(length, ipc_list, limit=20):
     sql = sql_format.format(length=length, in_=','.join(in_), limit=limit)
     # 查询，并返回dict的数据
     return db.select(sql)
+
+
+def update_year_target(department_id, data):
+    """
+    用户更新年度目标
+    :param department_id:部门id
+    :param data: [
+        {"key": 专利类型, "value": 目标数量， "id"： target表的主键}，
+        {},
+        ..
+    ]
+    """
+    try:
+        if len(data) < 0:
+            return {"success": True}
+        if "id" in data[0].keys():  # 数据库中已经存在今年的数据，则更新
+            for d in data:
+                sql = """
+                        update target set target_name="{}", numbers={} where id={}
+                    """.format(d["key"], d["value"], d["id"])
+                db.update(sql)
+        else:  # 数据库中未存在今年的数据， 直接进行插入
+            current_year = datetime.datetime.now().year
+            sql = """insert into target(target_name, numbers, year, department_id) values"""
+            for d in data:
+                sql += """("{}", {}, {}, {}),""".format(d["key"], d["value"], current_year, department_id)
+            sql = sql[0:-1]
+            db.insert(sql)
+        return {"success": True}
+    except Exception as e:
+        return {"error": True, "Msg": e}

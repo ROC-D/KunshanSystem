@@ -132,3 +132,10 @@ def count_patents_with_ipc(depth, limit=20):
     results.append({'code': '其他', 'amount': total - count, 'title': '其他类别的所有专利'})
 
     return results
+
+
+def update_year_target(department_id, data):
+    """
+    用户更新年度目标
+    """
+    return property_dao.update_year_target(department_id, data)

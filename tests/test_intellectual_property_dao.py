@@ -1,4 +1,7 @@
 import pytest
+import sys
+import os
+sys.path.append(os.getcwd())
 from web.dao.intellectual_property import *
 
 
@@ -23,6 +26,27 @@ def test_count_patents_with_ipc(init_test_app):
     first_datum = results[0]
     assert 'code' in first_datum
     assert 'amount' in first_datum
+
+
+def test_update_target(init_test_app):
+    department_id = 1
+    data = [
+        {
+            "key": "发明专利",
+            "value": 500,
+            "id": 1,
+        },{
+            "key": "实用新型",
+            "value": 500,
+            "id": 2,
+        },{
+            "key": "软件著作权",
+            "value": 500,
+            "id": 3,
+        },
+    ]
+    return_dict = update_year_target(department_id, data)
+    assert return_dict["success"]
 
 
 if __name__ == '__main__':
