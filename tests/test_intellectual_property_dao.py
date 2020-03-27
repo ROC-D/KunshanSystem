@@ -25,5 +25,16 @@ def test_count_patents_with_ipc(init_test_app):
     assert 'amount' in first_datum
 
 
+def test_get_target_info(init_test_app):
+    result = get_target_info(1, 2020)
+    assert isinstance(result, list)
+    assert len(result) == 4
+    assert "id" in result[0] and "name" in result[0] and "numbers" in result[0]
+
+    result = get_target_info(1, 2021)
+    assert isinstance(result, tuple)
+    assert len(result) == 0
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-s'])

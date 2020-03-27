@@ -30,6 +30,13 @@ def get_patent_number_by_type_year():
     return outcome_dict
 
 
+@intellectual_property_bp.route('/this_year_target')
+def get_this_year_target():
+    # TODO 从 session 中获取 department_id
+    department_id = request.args.get("department")
+    return jsonify(property_service.get_this_year_target_info(department_id=department_id))
+
+
 @intellectual_property_bp.route('/count_patents_with_ipc/<int:depth>')
 def get_patent_counts_with_depth(depth):
     results = property_service.count_patents_with_ipc(depth=depth, limit=7)

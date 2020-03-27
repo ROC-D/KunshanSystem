@@ -45,6 +45,15 @@ def get_patent_number_by_type(area="开发区"):
     return outcome_list
 
 
+def get_target_info(department_id, year):
+    """
+    获取某部门、某年的 任务目标信息
+    :return :empty tuple or list of dict ==>[{"id","name", "numbers"}]
+    """
+    sql = "select id, target_name as name, numbers from target where department_id=? and year=?"
+    return db.select(sql, department_id, year)
+
+
 def get_ipc_map(depth=0):
     """
     获取ipc目录

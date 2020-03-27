@@ -3,6 +3,7 @@
 """
 import os
 import sys
+import datetime
 import web.dao.intellectual_property as property_dao
 from web.CONST_DICT import PATENT_TYPE
 
@@ -100,6 +101,18 @@ def get_patent_number_by_type_and_year(area="开发区"):
             return_dict["其他专利"].append(0)
 
     return {"year_list": year_list, "patent_dict": return_dict}
+
+
+def get_this_year_target_info(department_id):
+    """
+    获取今年某部门的各项指标及目标
+    : return : () or list of data
+    """
+    year = datetime.datetime.now().year
+    data = property_dao.get_target_info(department_id, year)
+    if data is None:
+        return return_error("部门参数有误")
+    return data
 
 
 def count_patents_with_ipc(depth, limit=20):
