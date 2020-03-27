@@ -32,10 +32,5 @@ def get_patent_number_by_type_year():
 
 @intellectual_property_bp.route('/count_patents_with_ipc/<int:depth>')
 def get_patent_counts_with_depth(depth):
-    # TODO: 不能超过3类以上
-    if depth >= 3:
-        results = {'status': 'error', 'msg': 'invalid value of depth'}
-    else:
-        data = property_service.count_patents_with_ipc(depth=depth, limit=7)
-        results = {'status': 'ok', 'data': data}
+    results = property_service.count_patents_with_ipc(depth=depth, limit=7)
     return jsonify(results)

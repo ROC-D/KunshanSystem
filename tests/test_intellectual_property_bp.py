@@ -7,9 +7,8 @@ def test_count_patents_with_ipc(init_test_app):
     response = client.get(url_for('intellectual_property.get_patent_counts_with_depth', depth=0))
     json_data = response.get_json()
 
-    assert 'status' in json_data
-    assert 'ok' in json_data['status']
-    assert len(json_data['data']) == 8
+    assert 'error' not in json_data
+    assert len(json_data) == 8
 
 
 def test_count_patents_with_ipc_invalid(init_test_app):
@@ -17,8 +16,7 @@ def test_count_patents_with_ipc_invalid(init_test_app):
     response = client.get(url_for('intellectual_property.get_patent_counts_with_depth', depth=3))
     json_data = response.get_json()
 
-    assert 'status' in json_data
-    assert 'error' in json_data['status']
+    assert 'error' in json_data
 
 
 if __name__ == '__main__':
