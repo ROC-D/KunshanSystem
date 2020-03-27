@@ -42,7 +42,6 @@ def get_patent_number_by_type(area="开发区"):
         GROUP BY pa_year, pa_type
     """.format(area)
     outcome_list = db.select(sql)
-    print(outcome_list)
     return outcome_list
 
 

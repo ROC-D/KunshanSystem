@@ -92,7 +92,6 @@ def get_patent_number_by_type_and_year(area="开发区"):
             return_dict["其他专利"].append(patent_dict[year]["其他专利"])
         else:
             return_dict["其他专利"].append(0)
-    print(pprint.pformat(return_dict))
 
     return {"year_list": year_list, "patent_dict": return_dict}
 
