@@ -7,7 +7,7 @@ SERVER_LIST = [];
 * 保存任务列表：[{name, id}, ...]
 * TODO 请求该部门的任务列表
 * */
-TARGET_LIST = [{name:"发明专利", id: 1},{name:"其他知识产权", id: 3},{name:"实用新型", id: 2},{name:"外观设计", id: 11}];
+TARGET_LIST = ["发明专利","实用新型", "外观设计", "其他知识产权"];
 
 
 $("#server-name").on("change", function (e) {
@@ -32,11 +32,11 @@ $("#submit-distribute-task").on("click", function (e) {
     let send = {};
     for(let i = 0; i< data.length; i++){
         // 数据为空 or 数值为0
-        if(!data.value){
+        if(!data[i].value){
             toggle_alert(false, "请填写完整数据");
             return false;
         }
-        send[data.name] = data.value;
+        send[data[i].name] = data[i].value;
     }
 
     $.ajax({
@@ -50,7 +50,7 @@ $("#submit-distribute-task").on("click", function (e) {
                 return false;
             }
             toggle_alert(true, "执行成功");
-            $("#implementModal").modal();
+            $("#implementModal").modal("hide");
         }
     });
 });
@@ -101,37 +101,35 @@ function get_target() {
     })
 }
 function fill_server2modal(server_list) {
-    let  html= `<option value="0">--选择服务商--</option><option id="add-server"><i class="fe fe-plus-circle"></i>添加服务商</option>>`;
-    let len = html.length;
+    let  html= [`<option value="">--选择服务商--</option><option id="add-server" value=""><i class="fe fe-plus-circle"></i>添加服务商</option>>`];
     if(server_list.length == 0){
         get_server();
     }
     //无服务商
     else if(1 == server_list.length && server_list[0].isEmtpty){
-        $("#server-name").html(html);
+        $("#server-name").html(html[0]);
     }
     else{
         for (let i = 0; i < server_list.length; i++){
-            html = html.concat(`<option value="${server_list[i].id}" data-principal="${server_list[i].principal}">${server_list[i].name}</option>`);
+            html.push(`<option value="${server_list[i].id}" data-principal="${server_list[i].principal}">${server_list[i].name}</option>`);
         }
-        $("#server-name").html(html);
+        $("#server-name").html(html.join(""));
     }
 }
 
 function fill_target2modal(list) {
-    let  html= `<option value="0">--选择任务--</option>`;
-    let len = html.length;
+    let  html= [`<option value="">--选择任务--</option>`];
     if(list.length == 0){
         get_target();
     }
     //无任务
-    else if(1 == list.length && list[0].isEmtpty){
-        $("#task-name").html(html);
+    else if(1 == list.length && list[0] == false){
+        $("#task-name").html(html[0]);
     }
     else{
         for (let i = 0; i < list.length; i++){
-            html = html.concat(`<option value="${list[i].id}">${list[i].name}</option>`);
+            html.push(`<option value="${list[i]}">${list[i]}</option>`);
         }
-        $("#task-name").html(html);
+        $("#task-name").html(html.join(""));
     }
 }

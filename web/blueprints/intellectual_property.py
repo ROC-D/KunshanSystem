@@ -52,3 +52,26 @@ def update_year_target():
     department_id = request.form.get("department_id")
     data = json.loads(request.form.get("data"))
     return property_service.update_year_target(department_id, data)
+
+
+@intellectual_property_bp.route('/get_server_list')
+def get_server_list():
+    """
+    获取服务商列表
+    """
+    return property_service.get_server_list()
+
+
+@intellectual_property_bp.route('/distribute_task', methods=["POST"])
+def distribute_task():
+    charger_id = request.form.get("server-name")
+    task_name = request.form.get("task-name")
+    principal = request.form.get("principal")
+    task_goal = request.form.get("task-goal")
+    deadline = request.form.get("deadline")
+    task_id = request.form.get("task-id")
+
+    # TODO 从session中获取department_id
+    department_id = 1
+    return property_service.upsert_assignment(task_id=task_id, name=task_name, goal=task_goal, charger_id=charger_id,
+                                              charger_name=principal, deadline=deadline, department_id=department_id)

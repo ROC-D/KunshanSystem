@@ -3,9 +3,9 @@
 """
 import os
 import sys
-import datetime
+import datetime, time
 import web.dao.intellectual_property as property_dao
-from web.CONST_DICT import PATENT_TYPE
+from web.settings import PATENT_TYPE
 
 
 sys.path.append(os.getcwd())
@@ -150,3 +150,39 @@ def update_year_target(department_id, data):
     if result:
         return {"success": True}
     return return_error("修改失败")
+
+
+def upsert_assignment(task_id, name, goal, charger_id, charger_name, deadline, department_id):
+    """
+    政府插入/更新分配的任务
+    """
+    try:
+        # "2020-02-25" ==> 1381419600
+        timeArray = time.strptime(deadline, "%Y-%m-%d")
+        deadline = int(time.mktime(timeArray))
+
+        task_id, goal, charger_id, department_id = int(task_id), int(goal), int(charger_id), int(department_id)
+    except Exception as e:
+        return return_error("数据格式不正确")
+
+    # 未传 或 task_id < 0, 插入
+    if not task_id or task_id <= 0:
+        data = property_dao.insert_assignment(name, goal, charger_id, charger_name, deadline, department_id)
+    else:
+        data = property_dao.update_assignment(task_id, name, goal, charger_id, charger_name, deadline)
+    if data is None:
+        return return_error("操作失败")
+    return {"success": True}
+
+
+def get_server_list():
+    """
+
+    """
+    data = property_dao.get_server_list()
+    if data is None:
+        return return_error("获取服务商信息失败")
+    return {
+        item.get("name"): {"id": item.get("id"), "principal": item.get("principal")}
+        for item in data
+    }
