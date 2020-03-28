@@ -20,26 +20,14 @@ def get_different_patent_type_count(town="开发区"):
     return db.select(sql)
 
 
-def get_patent_number_by_type(area="开发区"):
+def get_patent_number_by_type(area="开发区", year=2020):
     """
-    获取某一区域下近五年来 每年 不同类型的专利数量
+    获取某一区域下近n年来 每年 不同类型的专利数量
     """
-    sql = """
-        SELECT pa_year, pa_type, count(1) number
-        from enterprise_patent 
-        where pa_year <= 2020
-        and enterprise_patent.pa_id in
-        (
-            SELECT pa_id from engineer_patent where engineer_id in
-            (
-                SELECT engineer_id from enterprise_engineer where en_id in
-                (
-                SELECT en_id from en_base_info where en_town = "{}"
-                )
-            )
-        )
-        GROUP BY pa_year, pa_type
-    """.format(area)
+    sql = """SELECT a.pa_year, a.pa_type, count(1) number
+            from enterprise_patent a LEFT JOIN en_base_info b on a.en_id=b.en_id
+            where b.en_town='{}' and a.pa_year < {}
+            GROUP BY a.pa_year, a.pa_type""".format(area, str(year))
     outcome_list = db.select(sql)
     return outcome_list
 
