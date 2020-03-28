@@ -25,6 +25,9 @@ $("#edit-year-goal").on("click", function(e){
 
 $("#add-task").on("click", function(e){
 	$("#implementModal").modal();
+	$("#task-id").val(-1);
+	fill_server2modal(SERVER_LIST);
+	fill_target2modal(TARGET_LIST);
 });
 
 //为显示IPC下的专利的饼图添加事件
@@ -112,6 +115,7 @@ function get_patent_number_by_type_year() {
 			let year_list = data["year_list"];
 			let patent_dict = data["patent_dict"];
 			add_this_year_target(year_list, patent_dict);
+
 			let serise = [], legend = [];
 			for(let typeName in patent_dict){
 				serise.push({
@@ -125,7 +129,6 @@ function get_patent_number_by_type_year() {
 				yAxis: "数量",
 				legend: legend
 			};
-
 			set_option(conversionsChart, barOption, BAR_DATA);
 		}
 	});
@@ -188,8 +191,7 @@ function get_statistical_data_of_patent(depth) {
 今年的目标
  */
 function add_this_year_target(year_list, patent_dict){
-	//TODO 获取今年年份
-    year_list.push(2020);
+    year_list.push(new Date().getFullYear());
     for(let k in dict){
     	if (patent_dict.hasOwnProperty(k)){
     		patent_dict[k].push(YEAR_GOAL[dict[k]]);
@@ -197,6 +199,8 @@ function add_this_year_target(year_list, patent_dict){
     	else{console.log(k)}
 	}
 }
+
+
 
 let conversionsChart = get_echart_object("conversionsChart");
 
