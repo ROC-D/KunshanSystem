@@ -52,3 +52,13 @@ def update_year_target():
     department_id = request.form.get("department_id")
     data = json.loads(request.form.get("data"))
     return property_service.update_year_target(department_id, data)
+
+
+@intellectual_property_bp.route('/get_service_situation/', methods=['GET', 'POST'])
+def get_service_situation():
+    """
+    根据部门id获取该部门的所用服务商的任务执行情况
+    """
+    # TODO 获取部门id
+    department_id = 1
+    return property_service.get_service_situation(department_id)

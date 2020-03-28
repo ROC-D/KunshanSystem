@@ -4,6 +4,7 @@
 import os
 import sys
 import datetime
+sys.path.append(os.getcwd())
 import web.dao.intellectual_property as property_dao
 from web.CONST_DICT import PATENT_TYPE
 
@@ -150,3 +151,22 @@ def update_year_target(department_id, data):
     if result:
         return {"success": True}
     return return_error("修改失败")
+
+
+def get_service_situation(department_id):
+    """
+    根据部门id获取该部门的所用服务商的任务执行情况
+    """
+    service_situation = property_dao.get_service_situation(department_id)
+    # 计算完成百分比
+    for d in service_situation:
+        d["percent"] = tranform_percent(d["progress"], d["task_target"])  # 转换成百分制
+    return service_situation
+
+
+def tranform_percent(a, b):
+    """
+    转化成百分制
+    """
+    c = a / b * 100
+    return str(c)[0:2] + "%"
