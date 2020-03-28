@@ -36,7 +36,7 @@ $("#submit-distribute-task").on("click", function (e) {
             toggle_alert(false, "请填写完整数据");
             return false;
         }
-        send[data[i].name] = data[i].value;
+        send[data[i].name] = data[i].value.trim();
     }
 
     $.ajax({
@@ -53,6 +53,50 @@ $("#submit-distribute-task").on("click", function (e) {
             $("#implementModal").modal("hide");
         }
     });
+});
+
+
+/*
+* 添加
+* */
+$("#inner_label").on("click", ".dropdown .dropdown-menu a", function (e) {
+    let task_id = $(this).parent().attr("task_id");
+    let $tr = $(this).parents("tr");
+    // 修改
+    if($(this).hasClass("modify-menu")){
+        fill_server2modal(SERVER_LIST);
+        fill_target2modal(TARGET_LIST);
+        let tds = $tr.children();
+        $("#task-name").val($(tds[1]).text());
+        $("#task-goal").val($(tds[2]).text());
+        $("#deadline").val($(tds[4]).text());
+        $("#principal").val($(tds[5]).text());
+        $("#task-id").val(task_id);
+        $("#implementModal").modal();
+        let charger_id = $(tds[5]).data("id");
+        $("#server-name").val(charger_id);
+    }
+    // 删除
+    else if($(this).hasClass("delete-menu")){
+        $.ajax({
+            url: "/delete_server_task",
+            type: "POST",
+            data: {"id": task_id},
+            dataType: "json",
+            success: function (json_data) {
+                if(json_data.error){
+                    toggle_alert(false, "删除失败，请稍后再试");
+                    return false;
+                }
+                toggle_alert(true, "删除成功");
+                $tr.remove();
+            },
+            error: function (error) {
+                console.log(error)
+                toggle_alert(false, "网络问题，请稍后再试");
+            }
+        });
+    }
 });
 
 
@@ -100,6 +144,8 @@ function get_target() {
         }
     })
 }
+
+
 function fill_server2modal(server_list) {
     let  html= [`<option value="">--选择服务商--</option><option id="add-server" value=""><i class="fe fe-plus-circle"></i>添加服务商</option>>`];
     if(server_list.length == 0){

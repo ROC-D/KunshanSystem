@@ -169,9 +169,18 @@ def upsert_assignment(task_id, name, goal, charger_id, charger_name, deadline, d
 
     # 未传 或 task_id < 0, 插入
     if not task_id or task_id <= 0:
+        # data => 123 (row_id)
         data = property_dao.insert_assignment(name, goal, charger_id, charger_name, deadline, department_id)
     else:
+        # data => 0 or 1 (effected rows)
         data = property_dao.update_assignment(task_id, name, goal, charger_id, charger_name, deadline)
+    if data is None:
+        return return_error("操作失败")
+    return {"success": data}
+
+
+def remove_assignment(task_id):
+    data = property_dao.update_assignment_status(task_id, 3)
     if data is None:
         return return_error("操作失败")
     return {"success": True}

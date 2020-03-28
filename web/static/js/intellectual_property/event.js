@@ -10,6 +10,8 @@ YEAR_GOAL = {
 let dict = {"发明专利": "target-of-patent", "实用新型": "target-of-utility-model-patent",
 	"外观设计": "target-of-design-patent", "其他知识产权": "target-of-other_patent"}
 
+serverCompare = {};
+
 /*
 * 处理各类响应事件
 * */
@@ -232,7 +234,11 @@ function get_completion_rate(){
 根据某一部门的id和任务类型找出各个服务商的任务完成情况
  */
 function get_service_completion(mission_type="发明专利"){
-	let department_id = 1
+	let department_id = 1;
+	if(serverCompare.hasOwnProperty(mission_type)){
+		fill_data4server_compare(serverCompare[mission_type]);
+		return true;
+	}
 	//发送请求
 	$.ajax({
 		type: "post",
@@ -247,21 +253,25 @@ function get_service_completion(mission_type="发明专利"){
 				toggle_alert(false, json_data['errorMsg']);
 				return false;
 			}
-			data = json_data["data"]
-			// 转换数据格式
-			let series = []
-			let legend = []
-			for (let i = 0;i < data.length; i++){
-				let datum = data[i];
-				series.push({"value": datum.progress, "name": datum.company, 'title': datum.charger_name});
-				legend.push(datum.company);
-			}
-			set_pie_option(serverCompareChart, pieOption, {"seriesName": "专利分布", "series": series, "legend": legend});
+			fill_data4server_compare(json_data["data"]);
+			serverCompare[mission_type] = json_data["data"];
 		},
 		error: function (error) {
 			console.error(error);
 		}
 	})
+}
+
+function fill_data4server_compare(data) {
+	// 转换数据格式
+	let series = [];
+	let legend = [];
+	for (let i = 0;i < data.length; i++){
+		let datum = data[i];
+		series.push({"value": datum.progress, "name": datum.company, 'title': datum.charger_name});
+		legend.push(datum.company);
+	}
+	set_pie_option(serverCompareChart, pieOption, {"seriesName": "专利分布", "series": series, "legend": legend});
 }
 
 /*
@@ -295,17 +305,17 @@ function get_service_situation(){
 function join_html_str(data){
 	let inner_html = [];
 	for(let i = 0; i < data.length; i++){
-		let company = data[i]["company"]
-		let charger_name = data[i]["charger_name"]
-		let deadline = data[i]["deadline"]
-		let percent = data[i]["percent"]
-		let task_target = data[i]["task_target"]
-		let task_id = data[i]["task_id"]
-		let type = data[i]["type"]
+		let company = data[i]["company"];
+		let charger_name = data[i]["charger_name"];
+		let deadline = data[i]["deadline"];
+		let percent = data[i]["percent"];
+		let task_target = data[i]["task_target"];
+		let task_id = data[i]["task_id"];
+		let type = data[i]["type"];
 
 		inner_html.push(
 			`<tr><td>${company}</td><td>${type}</td><td>${task_target}</td><td>${percent}</td><td>${deadline}</td>
-				<td>${charger_name}</td>
+				<td class="charger" data-id="${data[i]['charger_id']}">${charger_name}</td>
 				<td class="text-right">
 				   <div class="dropdown">
 						<a href="#" class="dropdown-ellipses dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -315,10 +325,10 @@ function join_html_str(data){
 							<a href="#!" class="dropdown-item">
 								查看
 							</a>
-							<a href="#!" class="dropdown-item">
+							<a href="#!" class="dropdown-item modify-menu">
 								修改
 							</a>
-							<a href="#!" class="dropdown-item text-danger">
+							<a href="#!" class="dropdown-item text-danger delete-menu">
 								删除
 							</a>
 						</div>
@@ -376,3 +386,7 @@ get_completion_rate();
 get_service_completion();
 
 get_service_situation();
+
+//获取服务商列表
+get_server();
+get_target();
