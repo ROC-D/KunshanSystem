@@ -28,13 +28,15 @@ $("#add-task").on("click", function(e){
 });
 
 //为显示IPC下的专利的饼图添加事件
-$("a[data-toggle='tab']").on("click", function (e) {
-	// console.log(e.target);
-	let ancestors = ['部', '大类', '小类'];
-	let text = $.trim($(e.target).text());
-	let depth = ancestors.indexOf(text);
-
+$("#patent_distribution_pie .nav-link").on("click", function (e) {
+	depth = $(this).data("depth");
 	get_statistical_data_of_patent(depth);
+});
+
+//为某一任务类型下的服务商完成数量对比的饼图添加事件
+$("#service_completion_comparison .nav-link").on("click", function (e) {
+	text = $.trim($(this).text());
+	get_service_completion(text);
 });
 
 $("#submit-year-target").on("click", function (e) {
@@ -198,6 +200,149 @@ function add_this_year_target(year_list, patent_dict){
 	}
 }
 
+/*
+获取今年的完成率
+ */
+function get_completion_rate(){
+	let department_id = 1
+	//发送请求
+	$.ajax({
+		type: "get",
+		url: "/get_completion_rate/" + department_id,
+		dataType: "json",
+		success: function (json_data) {
+			if (json_data.error) {
+				toggle_alert(false, json_data['errorMsg']);
+				return false;
+			}
+			// 显示该部门总的任务完成率
+			gaugeOption.series[0].data = [json_data];
+			completionRateChart.setOption(gaugeOption);
+		},
+		error: function (error) {
+			console.error(error);
+		}
+	})
+
+}
+
+/*
+根据某一部门的id和任务类型找出各个服务商的任务完成情况
+ */
+function get_service_completion(mission_type="发明专利"){
+	let department_id = 1
+	//发送请求
+	$.ajax({
+		type: "post",
+		url: "/get_service_completion/",
+		data:{
+			"department_id": department_id,
+			"mission_type": mission_type
+		},
+		dataType: "json",
+		success: function (json_data) {
+			if (json_data.error) {
+				toggle_alert(false, json_data['errorMsg']);
+				return false;
+			}
+			data = json_data["data"]
+			// 转换数据格式
+			let series = []
+			let legend = []
+			for (let i = 0;i < data.length; i++){
+				let datum = data[i];
+				series.push({"value": datum.progress, "name": datum.company, 'title': datum.charger_name});
+				legend.push(datum.company);
+			}
+			set_pie_option(serverCompareChart, pieOption, {"seriesName": "专利分布", "series": series, "legend": legend});
+		},
+		error: function (error) {
+			console.error(error);
+		}
+	})
+}
+
+/*
+获得某部门中各服务商的任务执行情况
+ */
+function get_service_situation(){
+	let department_id = 1;
+	$.ajax({
+		type: "get",
+		url: "/get_service_situation/" + department_id,
+		dataType: "json",
+		success: function (json_data) {
+			if (json_data.error) {
+				toggle_alert(false, json_data['errorMsg']);
+				return false;
+			}
+			data = json_data["data"];
+			//拼接执行情况中的html
+			inner_html = join_html_str(data);
+			$("#inner_label").html(inner_html);
+		},
+		error: function (error) {
+			console.error(error);
+		}
+	})
+}
+
+/*
+拼接执行情况中的html
+ */
+function join_html_str(data){
+	inner_html = "";
+	for(var i = 0; i < data.length; i++){
+		company = data[i]["company"]
+		charger_name = data[i]["charger_name"]
+		deadline = data[i]["deadline"]
+		percent = data[i]["percent"]
+		task_target = data[i]["task_target"]
+		task_id = data[i]["task_id"]
+		type = data[i]["type"]
+
+		inner_html += "<tr>\n" +
+		"                                        <td class=\"goal-project\">\n" +
+		"                                            "+ company +"\n" +
+		"                                        </td>\n" +
+		"                                        <td class=\"goal-type\">\n" +
+		"                                            "+ type +"\n" +
+		"                                        </td>\n" +
+		"                                        <td class=\"goal-date\">\n" +
+		"                                            "+ task_target +"\n" +
+		"                                        </td>\n" +
+		"                                        <td class=\"goal-progress\">\n" +
+		"                                            "+ percent +"\n" +
+		"                                        </td>\n" +
+		"                                        <td class=\"goal-date\">\n" +
+		"                                            <time datetime=\"2020-10-24\">"+ deadline +"</time>\n" +
+		"                                        </td>\n" +
+		"                                        <td>"+ charger_name +"</td>\n" +
+		"                                        <td class=\"text-right\">\n" +
+		"                                            <div class=\"dropdown\">\n" +
+		"                                                <a href=\"#\" class=\"dropdown-ellipses dropdown-toggle\" role=\"button\"\n" +
+		"                                                    data-toggle=\"dropdown\" task_id="+ task_id +" aria-haspopup=\"true\" aria-expanded=\"false\">\n" +
+		"                                                    <i class=\"fe fe-more-vertical\"></i>\n" +
+		"                                                </a>\n" +
+		"                                                <div class=\"dropdown-menu dropdown-menu-right\">\n" +
+		"                                                    <a href=\"#!\" class=\"dropdown-item\">\n" +
+		"                                                        查看\n" +
+		"                                                    </a>\n" +
+		"                                                    <a href=\"#!\" class=\"dropdown-item\">\n" +
+		"                                                        修改\n" +
+		"                                                    </a>\n" +
+		"                                                    <a href=\"#!\" class=\"dropdown-item text-danger\">\n" +
+		"                                                        删除\n" +
+		"                                                    </a>\n" +
+		"                                                </div>\n" +
+		"                                            </div>\n" +
+		"                                        </td>\n" +
+		"                                    </tr>\n"
+	}
+	return inner_html;
+}
+
+
 let conversionsChart = get_echart_object("conversionsChart");
 
 
@@ -206,14 +351,17 @@ let patentDistributionChart = get_echart_object("patentDistributionChart");
 
 
 let completionRateChart = get_echart_object("completionRateChart");
-gaugeOption.series[0].data = TEST_GAUGE_DATA.series;
-completionRateChart.setOption(gaugeOption);
+
 
 
 let taskCompareChart = get_echart_object("taskCompareChart");
 // set_option(taskCompareChart, lineOption, TEST_LINE_DATA);
 
-let compareBarOption = JSON.parse(JSON.stringify(barOption));;
+let compareBarOption = JSON.parse(JSON.stringify(barOption));
+
+let serverCompareChart = get_echart_object("serverCompareChart");
+
+
 let length = TEST_BAR_DATA_2.series.length;
 if(length <= 6){
 	compareBarOption.dataZoom=undefined;
@@ -234,3 +382,9 @@ get_this_year_target()
 get_patent_number_by_type_year();
 
 get_statistical_data_of_patent(0);
+
+get_completion_rate()
+
+get_service_completion()
+
+get_service_situation()

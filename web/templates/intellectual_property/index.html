@@ -182,19 +182,19 @@
                                 专利分布
                             </h4>
                              <!-- Tabs -->
-                            <ul class="nav nav-tabs nav-tabs-sm card-header-tabs">
+                            <ul class="nav nav-tabs nav-tabs-sm card-header-tabs" id="patent_distribution_pie">
                               <li class="nav-item" data-toggle="chart" data-target="#patentDistributionChart" data-trigger="click" data-action="toggle" data-dataset="0">
-                                <a href="#" class="nav-link active" data-toggle="tab">
+                                <a href="#" data-depth=0 class="nav-link active" data-toggle="tab">
                                   部
                                 </a>
                               </li>
                               <li class="nav-item" data-toggle="chart" data-target="#patentDistributionChart" data-trigger="click" data-action="toggle" data-dataset="1">
-                                <a href="#" class="nav-link" data-toggle="tab">
+                                <a href="#" data-depth=1 class="nav-link" data-toggle="tab">
                                   大类
                                 </a>
                               </li>
                                 <li class="nav-item" data-toggle="chart" data-target="#patentDistributionChart" data-trigger="click" data-action="toggle" data-dataset="1">
-                                <a href="#" class="nav-link" data-toggle="tab">
+                                <a href="#" data-depth=2 class="nav-link" data-toggle="tab">
                                   小类
                                 </a>
                               </li>
@@ -302,16 +302,20 @@
                                     <tr>
                                         <th>服务商</th>
                                         <th>任务</th>
+                                        <th>目标</th>
                                         <th>进度</th>
                                         <th>截至日期</th>
                                         <th>负责人</th>
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody class="list">
+                                <tbody class="list" id="inner_label">
                                     <tr>
                                         <td class="goal-project">
                                             三螺旋大数据科技(昆山)有限公司
+                                        </td>
+                                        <td class="goal-type">
+                                            发明专利
                                         </td>
                                         <td class="goal-date">
                                             120
@@ -357,6 +361,28 @@
 		                <h4 class="card-header-title">
 		                  服务商对比
 		                </h4>
+                          <ul class="nav nav-tabs nav-tabs-sm card-header-tabs" id="service_completion_comparison">
+                              <li class="nav-item" data-toggle="chart" data-target="#patentDistributionChart" data-trigger="click" data-action="toggle" data-dataset="0">
+                                  <a href="#" data-depth=0 class="nav-link active" data-toggle="tab">
+                                      发明专利
+                                  </a>
+                              </li>
+                              <li class="nav-item" data-toggle="chart" data-target="#patentDistributionChart" data-trigger="click" data-action="toggle" data-dataset="1">
+                                  <a href="#" data-depth=1 class="nav-link" data-toggle="tab">
+                                      实用新型专利
+                                  </a>
+                              </li>
+                              <li class="nav-item" data-toggle="chart" data-target="#patentDistributionChart" data-trigger="click" data-action="toggle" data-dataset="1">
+                                  <a href="#" data-depth=2 class="nav-link" data-toggle="tab">
+                                      外观设计专利
+                                  </a>
+                              </li>
+                              <li class="nav-item" data-toggle="chart" data-target="#patentDistributionChart" data-trigger="click" data-action="toggle" data-dataset="1">
+                                  <a href="#" data-depth=2 class="nav-link" data-toggle="tab">
+                                      其他知识产权
+                                  </a>
+                              </li>
+                          </ul>
 		              </div>
 		              <div class="card-body remove-padding">
 

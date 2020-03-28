@@ -155,7 +155,7 @@ def update_year_target(department_id, data):
 
 def get_service_situation(department_id):
     """
-    根据部门id获取该部门的所用服务商的任务执行情况
+    根据部门id获取该部门的所用服务商的任务执行情况()
     """
     service_situation = property_dao.get_service_situation(department_id)
     # 计算完成百分比
@@ -170,3 +170,19 @@ def tranform_percent(a, b):
     """
     c = a / b * 100
     return str(c)[0:2] + "%"
+
+
+def get_completion_rate(department_id):
+    """
+    根据部门id获取该部门的总任务的完成情况
+    """
+    completion = property_dao.get_completion_rate(department_id)
+    completion_rate = completion["done"] / completion["sum"]
+    return float(round(completion_rate * 100, 2))  # 保留两位小数
+
+
+def get_service_completion(department_id, mission_type):
+    """
+    获取某一部门某一类型的各服务商完成任务的数量
+    """
+    return property_dao.get_service_comparison(department_id, mission_type)

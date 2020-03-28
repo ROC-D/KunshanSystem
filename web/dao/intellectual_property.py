@@ -96,9 +96,39 @@ def get_service_situation(department_id):
     根据部门id获取该部门的所用服务商的任务执行情况
     """
     sql = """
-        SELECT s.charger_name, s.service_provider_name company, a.type, a.task_target, a.progress, FROM_UNIXTIME(a.deadline, "%%Y-%%m-%%d") deadline
+        SELECT s.charger_name, s.service_provider_name company, a.task_id, a.type, a.task_target, a.progress, FROM_UNIXTIME(a.deadline, "%%Y-%%m-%%d") deadline
         from assignment a left join service_provider s on a.charger_id=s.charger_id
         where a.department_id={}
         ORDER BY deadline desc
     """.format(department_id)
     return db.select(sql)
+
+
+def get_completion_rate(department_id):
+    """
+    根据部门id获取该部门的总任务的完成情况
+    """
+    sql = """
+        SELECT sum(task_target) sum, sum(progress) done 
+        from assignment 
+        where department_id={}
+    """.format(department_id)
+    completion = db.select_one(sql)
+    return completion
+
+
+def get_service_comparison(department_id, mission_type):
+    """
+    获取某一部门某一类型的各服务商完成任务的数量
+    """
+    sql = """
+        SELECT a.task_target, a.charger_id, a.charger_name, a.progress, s.service_provider_name company
+        from assignment a left join service_provider s on a.charger_id=s.charger_id
+        where type="{}" and department_id={}
+    """.format(mission_type, department_id)
+    return db.select(sql)
+
+
+
+
+

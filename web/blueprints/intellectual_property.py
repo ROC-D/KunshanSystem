@@ -54,11 +54,39 @@ def update_year_target():
     return property_service.update_year_target(department_id, data)
 
 
-@intellectual_property_bp.route('/get_service_situation/', methods=['GET', 'POST'])
-def get_service_situation():
+@intellectual_property_bp.route('/get_service_situation/<department_id>', methods=['GET', 'POST'])
+def get_service_situation(department_id):
     """
     根据部门id获取该部门的所用服务商的任务执行情况
     """
-    # TODO 获取部门id
-    department_id = 1
-    return property_service.get_service_situation(department_id)
+    try:
+        outcome = property_service.get_service_situation(department_id)
+        return {"error": False, "data": outcome}
+    except Exception as e:
+        return {"error": True, "errorMsg": e}
+
+
+@intellectual_property_bp.route('/get_completion_rate/<department_id>', methods=['GET', 'POST'])
+def get_completion_rate(department_id):
+    """
+    根据部门id获取该部门的总任务的完成情况
+    """
+    try:
+        completion_rate = property_service.get_completion_rate(department_id)
+        return {"error": False, "value": completion_rate, "name": "完成率"}
+    except Exception as e:
+        return {"error": True, "errorMsg": e}
+
+
+@intellectual_property_bp.route('/get_service_completion/', methods=['GET', 'POST'])
+def get_service_completion():
+    """
+    获取某一部门某一类型的各服务商完成任务的数量
+    """
+    try:
+        department_id = request.form.get("department_id")
+        mission_type = request.form.get("mission_type")
+        outcome = property_service.get_service_completion(department_id, mission_type)
+        return {"error": False, "data": outcome}
+    except Exception as e:
+        return {"error": True, "errorMsg": e}
