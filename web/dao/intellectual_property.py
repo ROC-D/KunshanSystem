@@ -20,26 +20,14 @@ def get_different_patent_type_count(town="开发区"):
     return db.select(sql)
 
 
-def get_patent_number_by_type(area="开发区"):
+def get_patent_number_by_type(area="开发区", year=2020):
     """
-    获取某一区域下近五年来 每年 不同类型的专利数量
+    获取某一区域下近n年来 每年 不同类型的专利数量
     """
-    sql = """
-        SELECT pa_year, pa_type, count(1) number
-        from enterprise_patent 
-        where pa_year <= 2020
-        and enterprise_patent.pa_id in
-        (
-            SELECT pa_id from engineer_patent where engineer_id in
-            (
-                SELECT engineer_id from enterprise_engineer where en_id in
-                (
-                SELECT en_id from en_base_info where en_town = "{}"
-                )
-            )
-        )
-        GROUP BY pa_year, pa_type
-    """.format(area)
+    sql = """SELECT a.pa_year, a.pa_type, count(1) number
+            from enterprise_patent a LEFT JOIN en_base_info b on a.en_id=b.en_id
+            where b.en_town='{}' and a.pa_year < {}
+            GROUP BY a.pa_year, a.pa_type""".format(area, str(year))
     outcome_list = db.select(sql)
     return outcome_list
 
@@ -144,3 +132,42 @@ def get_server_list():
     sql = "SELECT charger_id as id, service_provider_name as name, charger_name as principal " \
           "from service_provider where status=1"
     return db.select(sql)
+
+
+def get_service_situation(department_id):
+    """
+    根据部门id获取该部门的所用服务商的任务执行情况
+    """
+    sql = """
+        SELECT s.charger_name, s.service_provider_name company, a.task_id, a.type, a.task_target, a.progress, FROM_UNIXTIME(a.deadline, "%%Y-%%m-%%d") deadline
+        from assignment a left join service_provider s on a.charger_id=s.charger_id
+        where a.department_id={}
+        ORDER BY deadline desc
+    """.format(department_id)
+    return db.select(sql)
+
+
+def get_completion_rate(department_id):
+    """
+    根据部门id获取该部门的总任务的完成情况
+    """
+    sql = """
+        SELECT sum(task_target) sum, sum(progress) done 
+        from assignment 
+        where department_id={}
+    """.format(department_id)
+    completion = db.select_one(sql)
+    return completion
+
+
+def get_service_comparison(department_id, mission_type):
+    """
+    获取某一部门某一类型的各服务商完成任务的数量
+    """
+    sql = """
+        SELECT a.task_target, a.charger_id, a.charger_name, a.progress, s.service_provider_name company
+        from assignment a left join service_provider s on a.charger_id=s.charger_id
+        where type="{}" and department_id={}
+    """.format(mission_type, department_id)
+    return db.select(sql)
+

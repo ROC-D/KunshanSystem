@@ -3,7 +3,9 @@
 """
 import os
 import sys
-import datetime, time
+import time
+import datetime
+sys.path.append(os.getcwd())
 import web.dao.intellectual_property as property_dao
 from web.settings import PATENT_TYPE
 
@@ -186,3 +188,38 @@ def get_server_list():
         item.get("name"): {"id": item.get("id"), "principal": item.get("principal")}
         for item in data
     }
+
+
+def get_service_situation(department_id):
+    """
+    根据部门id获取该部门的所用服务商的任务执行情况()
+    """
+    service_situation = property_dao.get_service_situation(department_id)
+    # 计算完成百分比
+    for d in service_situation:
+        d["percent"] = tranform_percent(d["progress"], d["task_target"])  # 转换成百分制
+    return service_situation
+
+
+def tranform_percent(a, b):
+    """
+    转化成百分制
+    """
+    c = a / b * 100
+    return str(c)[0:2] + "%"
+
+
+def get_completion_rate(department_id):
+    """
+    根据部门id获取该部门的总任务的完成情况
+    """
+    completion = property_dao.get_completion_rate(department_id)
+    completion_rate = completion["done"] / completion["sum"]
+    return float(round(completion_rate * 100, 2))  # 保留两位小数
+
+
+def get_service_completion(department_id, mission_type):
+    """
+    获取某一部门某一类型的各服务商完成任务的数量
+    """
+    return property_dao.get_service_comparison(department_id, mission_type)
