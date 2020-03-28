@@ -141,7 +141,7 @@ def get_service_situation(department_id):
     sql = """
         SELECT s.charger_name, s.service_provider_name company, a.task_id, a.type, a.task_target, a.progress, FROM_UNIXTIME(a.deadline, "%%Y-%%m-%%d") deadline
         from assignment a left join service_provider s on a.charger_id=s.charger_id
-        where a.department_id={}
+        where a.department_id={} and a.status != 3
         ORDER BY deadline desc
     """.format(department_id)
     return db.select(sql)
