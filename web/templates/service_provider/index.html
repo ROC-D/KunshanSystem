@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropzone.min.css') }}" type="text/css">
+    {{ dropzone.style('margin: 20px 0; border: 2px dashed #0087F7 min-height: 400px') }}
+{% endblock %}
+
+{% block title %}上传进度{% endblock %}
+
+{% block main %}
+    <div class="container">
+    {{ render_form(form) }}
+        {{ dropzone.create(action='service_provider.upload') }}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>
+    {{ dropzone.config() }}
+    <script type="text/javascript">
+    TASKS = {{ tasks | safe}};
+    </script>
+    <script src="{{ url_for('static', filename='js/service_provider/index.js') }}"></script>
+{% endblock %}
+
