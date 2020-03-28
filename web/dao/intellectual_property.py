@@ -99,5 +99,48 @@ def update_year_target(id, numbers):
 
 
 def insert_year_target(target_name, numbers, year, department_id):
-    sql = "insert into target(target_name, numbers, year, department_id) values('?',?,?,?)"
+    sql = "insert into target(target_name, numbers, year, department_id) values(?,?,?,?)"
     return db.insert(sql, target_name, numbers, year, department_id)
+
+
+def insert_assignment(type, target, charger_id, charger_name, deadline, department_id):
+    """
+    插入一条任务
+    """
+    sql = "insert into assignment(type, task_target, charger_id, charger_name, deadline, department_id) " \
+          "values(?, ?, ?, ?, ?, ?)"
+    return db.insert(sql, type, target, charger_id, charger_name, deadline, department_id)
+
+
+def update_assignment(task_id, type, target, charge_id, charge_name, deadline):
+    """
+    政府人员更新任务信息，包含 任务名，目标，负责人，截至日期等
+    """
+    sql = "update assignment set type=?, task_target=?, charger_id=?, charger_name=?, deadline=? where task_id=?"
+    return db.update(sql, type, target, charge_id, charge_name, deadline, task_id)
+
+
+def update_assignment_status(task_id, status):
+    """
+    修改任务的状态
+    """
+    sql = "update assignment set status=? where task_id=?"
+    return db.update(sql, status, task_id)
+
+
+def update_assignment_progress(task_id, progress):
+    """
+    服务商修改完成度
+    """
+    sql = "update assignment set progress=progress + ? where task_id=?"
+    return db.update(sql, progress, task_id)
+
+
+def get_server_list():
+    """
+    获取可用服务商列表
+    : return: None or [{id, name, principal}, ...]
+    """
+    sql = "SELECT charger_id as id, service_provider_name as name, charger_name as principal " \
+          "from service_provider where status=1"
+    return db.select(sql)
