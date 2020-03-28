@@ -77,6 +77,12 @@ def distribute_task():
                                               charger_name=principal, deadline=deadline, department_id=department_id)
 
 
+@intellectual_property_bp.route('/delete_server_task', methods=["POST"])
+def delete_server_task():
+    task_id = request.form.get("id")
+    return property_service.remove_assignment(task_id)
+
+
 @intellectual_property_bp.route('/get_service_situation/<department_id>', methods=['GET', 'POST'])
 def get_service_situation(department_id):
     """
