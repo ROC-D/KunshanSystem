@@ -386,7 +386,3 @@ get_completion_rate();
 get_service_completion();
 
 get_service_situation();
-
-//获取服务商列表
-get_server();
-get_target();

@@ -64,8 +64,6 @@ $("#inner_label").on("click", ".dropdown .dropdown-menu a", function (e) {
     let $tr = $(this).parents("tr");
     // 修改
     if($(this).hasClass("modify-menu")){
-        fill_server2modal(SERVER_LIST);
-        fill_target2modal(TARGET_LIST);
         let tds = $tr.children();
         $("#task-name").val($(tds[1]).text());
         $("#task-goal").val($(tds[2]).text());
@@ -179,3 +177,8 @@ function fill_target2modal(list) {
         $("#task-name").html(html.join(""));
     }
 }
+
+
+//获取服务商列表
+fill_server2modal(SERVER_LIST);
+fill_target2modal(TARGET_LIST);
