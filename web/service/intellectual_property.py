@@ -60,6 +60,8 @@ def get_patent_number_by_type_and_year(area="开发区"):
         "9": "其他知识产权",
     }
     outcome_list = property_dao.get_patent_number_by_type(area)
+    if outcome_list is None:
+        return return_error("获取数据失败")
     patent_dict = {}
     year_set = set()
     for d in outcome_list:

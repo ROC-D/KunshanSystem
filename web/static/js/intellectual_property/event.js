@@ -1,19 +1,8 @@
 /*
-* 定义全局变量
-* */
-YEAR_GOAL = {
-	"target-of-patent": 0,
-	"target-of-utility-model-patent": 0,
-	"target-of-design-patent": 0,
-	"target-of-other_patent": 0
-};
-let dict = {"发明专利": "target-of-patent", "实用新型": "target-of-utility-model-patent",
-	"外观设计": "target-of-design-patent", "其他知识产权": "target-of-other_patent"}
-
-serverCompare = {};
-
-/*
 * 处理各类响应事件
+* */
+/*
+* 编辑年度目标
 * */
 $("#edit-year-goal").on("click", function(e){
 
@@ -25,12 +14,6 @@ $("#edit-year-goal").on("click", function(e){
  	}
 });
 
-$("#add-task").on("click", function(e){
-	$("#implementModal").modal();
-	$("#task-id").val(-1);
-	fill_server2modal(SERVER_LIST);
-	fill_target2modal(TARGET_LIST);
-});
 
 //为显示IPC下的专利的饼图添加事件
 $("#patent_distribution_pie .nav-link").on("click", function (e) {
@@ -44,48 +27,9 @@ $("#service_completion_comparison .nav-link").on("click", function (e) {
 	get_service_completion(text);
 });
 
-$("#submit-year-target").on("click", function (e) {
-	let data = {}, $target;
-	for(let k in YEAR_GOAL){
-		$target = $("#".concat(k));
-		let value = $target.val();
-		if(YEAR_GOAL[k] == value){
-			continue;
-		}else{
-			YEAR_GOAL[k] = value;
-		}
-
-		let id = $target.data("id");
-		let name = $target.attr("data-name");
-		data[name] = {"value": YEAR_GOAL[k]};
-		if(id){
-			data[name]["id"] = id;
-		}
-	}
-
-	$.ajax({
-		type: "POST",
-		url: "/update_year_target",
-		data: {"department_id": 1, "data": JSON.stringify(data)},
-		dataType:"json",
-		success: function (json_data) {
-			if(json_data.error){
-				toggle_alert(false, json_data.errorMsg);
-				return false;
-			}
-			toggle_alert(true, "修改成功");
-			get_patent_number_by_type_year();
-		},
-		error:function (error) {
-			toggle_alert(false, error);
-		}
-	})
-});
-
 /*
 * 定义各类异步请求
 * */
-
 function get_different_patent_type_count() {
 	$.ajax({
 		url: "/get_different_patent_type_count",
@@ -110,57 +54,25 @@ function get_different_patent_type_count() {
 
 
 function get_patent_number_by_type_year() {
-	conversionsChart.showLoading();
 	$.ajax({
 		datatype: "json",
 		type: "get",
 		url: '/get_patent_number_by_type_year',
 		success: function (data) {
-			let year_list = data["year_list"];
-			let patent_dict = data["patent_dict"];
-			add_this_year_target(year_list, patent_dict);
-
-			let serise = [], legend = [];
-			for(let typeName in patent_dict){
-				serise.push({
-					name: typeName,data: patent_dict[typeName], type: 'bar', barWidth: 10
-				});
-				legend.push(typeName);
+			if (data.error){
+				toggle_alert(false, data.errorMsg);
+				return false;
 			}
-			let BAR_DATA = {
-				series: serise,
-				xAxis: year_list,
-				yAxis: "数量",
-				legend: legend
-			};
-			set_option(conversionsChart, barOption, BAR_DATA);
+			add_this_year_target(data["year_list"], data["patent_dict"]);
+			updateConversionsChart(data["year_list"], data["patent_dict"]);
+		},
+		error: function (error) {
+			toggle_alert(false, "网络出现问题，请稍后再试");
 		}
 	});
 }
 
-/*
-* 获取今年任务目标
-* */
-function get_this_year_target() {
-	$.ajax({
-		url: "/this_year_target",
-		data:{"department":1},
-		dataType:"json",
-		success:function (json_data) {
-			if(json_data.error){
-				toggle_alert(false, json_data.errorMsg);
-				return false;
-			}
-			for(let i = 0; i < json_data.length; i++){
-				let id = dict[json_data[i]["name"]];
-				YEAR_GOAL[id] = json_data[i]["numbers"];
-				if(json_data[i].hasOwnProperty("id")){
-					$("#".concat(id)).attr("data-id", json_data[i]["id"]);
-				}
-			}
-		}
-	})
-}
+
 
 function get_statistical_data_of_patent(depth) {
 	//发送请求
@@ -192,13 +104,33 @@ function get_statistical_data_of_patent(depth) {
 
 
 /*
-今年的目标
- */
-function add_this_year_target(year_list, patent_dict){
+* 根据数据更新图
+* */
+function updateConversionsChart(year_list, data_dict) {
+	let serise = [], legend = [];
+	for(let type_name in data_dict){
+		serise.push({
+			name: type_name,data: data_dict[type_name], type: 'bar', barWidth: 10
+		});
+		legend.push(type_name);
+	}
+	let BAR_DATA = {
+		series: serise,
+		xAxis: year_list,
+		yAxis: "数量",
+		legend: legend
+	};
+	set_option(conversionsChart, barOption, BAR_DATA);
+}
+
+/*
+* 添加今年目标
+* */
+function add_this_year_target(year_list, data_dict){
     year_list.push(new Date().getFullYear());
     for(let k in dict){
-    	if (patent_dict.hasOwnProperty(k)){
-    		patent_dict[k].push(YEAR_GOAL[dict[k]]);
+    	if (data_dict.hasOwnProperty(k)){
+    		data_dict[k].push(YEAR_GOAL[dict[k]]);
 		}
     	else{console.log(k)}
 	}
@@ -261,6 +193,7 @@ function get_service_completion(mission_type="发明专利"){
 		}
 	})
 }
+
 
 function fill_data4server_compare(data) {
 	// 转换数据格式

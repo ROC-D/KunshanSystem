@@ -2,6 +2,7 @@
 * 保存服务商列表： [{name, id, principal},...]
 * */
 SERVER_LIST = [];
+serverCompare = {};
 
 /*
 * 保存任务列表：[{name, id}, ...]
@@ -9,7 +10,58 @@ SERVER_LIST = [];
 * */
 TARGET_LIST = ["发明专利","实用新型", "外观设计", "其他知识产权"];
 
+/*
+* 定义全局变量
+* */
+YEAR_GOAL = {
+	"target-of-patent": 0,
+	"target-of-utility-model-patent": 0,
+	"target-of-design-patent": 0,
+	"target-of-other_patent": 0
+};
+let dict = {"发明专利": "target-of-patent", "实用新型": "target-of-utility-model-patent",
+	"外观设计": "target-of-design-patent", "其他知识产权": "target-of-other_patent"}
 
+
+/*
+* 提交年度计划
+* */
+$("#submit-year-target").on("click", function (e) {
+	let data = format_year_target_form();
+	$.ajax({
+		type: "POST",
+		url: "/update_year_target",
+		data: {"department_id": 1, "data": JSON.stringify(data)},
+		dataType:"json",
+		success: function (json_data) {
+			if(json_data.error){
+				toggle_alert(false, json_data.errorMsg);
+				return false;
+			}
+			toggle_alert(true, "修改成功");
+			get_patent_number_by_type_year();
+			$("#propertyModal").modal("hide");
+		},
+		error:function (error) {
+			toggle_alert(false, error);
+		}
+	})
+});
+
+
+/*
+* 添加任务
+* */
+$("#add-task").on("click", function(e){
+	$("#implementModal").modal();
+	$("#task-id").val(-1);
+	fill_server2modal(SERVER_LIST);
+	fill_target2modal(TARGET_LIST);
+});
+
+/*
+* 更换服务商
+* */
 $("#server-name").on("change", function (e) {
    let option = $(this).children("option:selected");
    if (option.attr("id")){
@@ -23,6 +75,7 @@ $("#server-name").on("change", function (e) {
 
    }
 });
+
 
 /*
 * 提交分配任务表单
@@ -57,7 +110,7 @@ $("#submit-distribute-task").on("click", function (e) {
 
 
 /*
-* 添加
+* 对一条任务的操作
 * */
 $("#inner_label").on("click", ".dropdown .dropdown-menu a", function (e) {
     let task_id = $(this).parent().attr("task_id");
@@ -96,6 +149,64 @@ $("#inner_label").on("click", ".dropdown .dropdown-menu a", function (e) {
         });
     }
 });
+
+
+/*
+* 获取 目标编辑页面中填写的数据
+* 返回json: {"发明专利":{value,id}}
+* */
+function format_year_target_form(){
+	let data = {}, $target;
+	for(let k in YEAR_GOAL){
+		$target = $("#".concat(k));
+		let value = $target.val();
+		//未修改
+		if(YEAR_GOAL[k] == value){
+			continue;
+		}else{
+			YEAR_GOAL[k] = value;
+		}
+
+		let id = $target.data("id");
+		let name = $target.attr("data-name");
+		data[name] = {"value": YEAR_GOAL[k]};
+		if(id){
+			data[name]["id"] = id;
+		}
+	}
+	return data;
+}
+
+/*
+* 获取今年任务目标
+* */
+function get_this_year_target() {
+	$.ajax({
+		url: "/this_year_target",
+		data:{"department":1},
+		dataType:"json",
+		success:function (json_data) {
+			if(json_data.error){
+				toggle_alert(false, json_data.errorMsg);
+				return false;
+			}
+			for(let i = 0; i < json_data.length; i++){
+				let key = json_data[i]["name"];
+				if(!dict.hasOwnProperty(key)){
+					console.error("invalid key", key);
+					continue;
+				}
+				let id = dict[key];
+				YEAR_GOAL[id] = json_data[i]["numbers"];
+
+				// 保存已有的目标id
+				if(json_data[i].hasOwnProperty("id")){
+					$("#".concat(id)).attr("data-id", json_data[i]["id"]);
+				}
+			}
+		}
+	})
+}
 
 
 /*
