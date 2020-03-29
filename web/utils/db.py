@@ -112,18 +112,16 @@ def _insert(sql, insertMany, *args):
     :param sql: SQL语句 内部变量使用?
     :param insertMany: 是否要插入多行
     :param args: SQL语句中要使用的变量
-    :return: 返回插入的结果
+    :return: 返回插入的结果 插入失败则返回-1
     """
     global POOL
     connection = None
     cursor = None
     logging.info('SQL: %s %s' % (sql, args if len(args) > 0 else ""))
     sql = sql.replace('?', '%s')
-
     try:
         connection = POOL.connection()
         cursor = connection.cursor(cursor=pymysql.cursors.DictCursor)
-
         # print('SQL: %s %s' % (sql, args if len(args) > 0 else ""))
 
         # 利用本身的 execute 函数的特性，传入两个参数：sql语句与tuple类型的参数，以避免sql注入
@@ -132,20 +130,16 @@ def _insert(sql, insertMany, *args):
             cursor.executemany(sql, args)
         else:
             cursor.execute(sql, args)
-
         # 返回最后插入行的主键ID
         return cursor.lastrowid
-
     except Exception as e:
         print(e)
         connection.rollback()  # 事务回滚
-
     finally:
         cursor.close()
-
         connection.commit()
-
         connection.close()
+    return -1
 
 
 def insert(sql, *args):

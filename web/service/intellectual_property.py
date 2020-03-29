@@ -216,8 +216,8 @@ def tranform_percent(a, b):
     """
     转化成百分制
     """
-    c = a / b * 100
-    return str(c)[0:2] + "%"
+    c = a* 100 // b
+    return str(c) + "%"
 
 
 def get_completion_rate(department_id):
