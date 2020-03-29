@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from web.settings import configuration
 from web.blueprints.intellectual_property import intellectual_property_bp
 from web.blueprints.service_provider import service_provider_bp
-from web.extensions import bootstrap, dropzone
+from web.extensions import bootstrap
 from web.utils import db
 from web.config import MYSQL_CONFIG
 
@@ -41,7 +41,6 @@ def register_logger(app):
 
 def register_extensions(app):
     bootstrap.init_app(app)
-    dropzone.init_app(app)
 
 
 def register_blueprints(app):
