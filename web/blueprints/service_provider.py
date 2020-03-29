@@ -11,7 +11,8 @@ def index():
     # TODO:登录的商务
     charger_id = 1
     charger_name = '负责人1'
-    departments, tasks = provider_service.get_assignments(charger_id)
+    # TODO:待修改
+    departments, tasks, records = provider_service.get_assignments(charger_id)
     form = ProcessForm(departments, tasks)
     # 上传
     if form.validate_on_submit():
@@ -22,7 +23,7 @@ def index():
         ret = provider_service.add_one_record(charger_name, charger_id, department_id, mission_type, complete_number, uploads)
         status, msg = ("success", "插入成功") if ret else ("danger", "插入失败")
         flash(msg, status)
-    return render_template('service_provider/index.html', form=form, tasks=tasks)
+    return render_template('service_provider/index.html', form=form, tasks=tasks, records=records)
 
 
 @service_provider_bp.route('/upload', methods=['POST'])
