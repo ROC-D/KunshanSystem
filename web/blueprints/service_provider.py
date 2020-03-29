@@ -23,6 +23,8 @@ def index():
         ret = provider_service.add_one_record(charger_name, charger_id, department_id, mission_type, complete_number, uploads)
         status, msg = ("success", "插入成功") if ret else ("danger", "插入失败")
         flash(msg, status)
+        # 转到GET
+        return redirect(url_for('service_provider.index'))
     return render_template('service_provider/index.html', form=form, tasks=tasks, records=records)
 
 
