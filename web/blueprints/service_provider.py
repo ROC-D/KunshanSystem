@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, current_app, session, redirect, url_for, flash
+from flask import Blueprint, render_template, request, current_app, redirect, url_for, flash, jsonify
 from web.forms import ProcessForm
 from web.service import service_provider as provider_service
 
@@ -15,7 +15,7 @@ def index():
     form = ProcessForm(departments, tasks)
     # 上传
     if form.validate_on_submit():
-        uploads = session.pop('uploads', [])
+        uploads = form.get_upload_filenames()
         department_id = form.departments.data
         mission_type = form.tasks.data
         complete_number = form.numbers.data
@@ -35,8 +35,4 @@ def upload():
         if not os.path.exists(upload_path):
             os.makedirs(upload_path)
         f.save(os.path.join(upload_path, filename))
-        # 暂时存储文件名称
-        if 'uploads' not in session:
-            session['uploads'] = []
-        session['uploads'].append(filename)
-    return redirect(url_for('service_provider.index'))
+        return jsonify({'filename': filename})
