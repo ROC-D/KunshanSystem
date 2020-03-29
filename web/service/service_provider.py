@@ -12,8 +12,10 @@ def get_assignments(charger_id):
     department_ids = [task['department_id'] for task in tasks]
     # 获取所有的科室
     departments = provider_dao.get_departments(department_ids)
+    # 获取所有的已经提交的记录
+    records = provider_dao.get_records(charger_id)
     # 组合科室和任务
-    return departments, tasks
+    return departments, tasks, records
 
 
 def add_one_record(charge_name, charge_id, department_id, mission_type, complete_number, uploads):
