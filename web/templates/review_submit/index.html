@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}任务审批{% endblock %}
+{% block styles %}
+    <style>
+        .review-btn:hover{
+            background: #f9f8f0;
+        }
+    </style>
+{% endblock %}
+{% block main %}
+    <div class="container-fluid pt-4">
+        {# 显示已经提交的记录 #}
+        <div class="card">
+            <div class="card-header">
+                <!-- Title -->
+                <h3 class="card-header-title">
+                    提交记录
+                </h3>
+
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-lg list-group-flush list my-n4">
+                {% for record in records %}
+                    <li class="list-group-item">
+                        <div class="row align-items-center">
+                            <div class="col ml-n2">
+                                <h4 class="mb-1">{{ record.record_title }}</h4>
+                                <p class="card-text small text-muted">
+                                    {{ record.sub_time }}
+                                </p>
+                            </div>
+                            <div class="col-auto">
+                                {% if 0 == record.audit_status %}
+                                    <span class="badge badge-warning">未审核</span>
+                                {% elif 1 == record.audit_status %}
+                                    <span class="badge badge-success">已通过</span>
+                                {% else %}
+                                    <span class="badge badge-danger">未通过</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-auto">
+                                 <a href="{{ url_for('review_submit.review', task=record.mission_type) }}">{{ record.mission_type }}</a> ： <span>{{ record.complete_numbers }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <a href="{{ url_for('review_submit.review', server=record.charger_id) }}">{{ record.name }}</a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="#!" class="btn btn-sm btn-white d-none d-md-inline-block">下载附件</a>
+                            </div>
+                            {% if 0 == record.audit_status %}
+                                <div class="col-auto">
+                                    <!-- Dropdown -->
+                                    <div class="dropdown">
+
+                                      <!-- Toggle -->
+                                      <a href="#" class="dropdown-ellipses dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fe fe-more-vertical"></i>
+                                      </a>
+
+                                      <!-- Menu -->
+                                      <div class="dropdown-menu dropdown-menu-right" data-id="{{ record.record_id }}">
+                                        <span class="dropdown-item text-success review-btn cursor-pointer" data-status='1'>
+                                          通过
+                                        </span>
+                                        <span class="dropdown-item text-danger review-btn cursor-pointer" data-status='2'>
+                                          不通过
+                                        </span>
+                                      </div>
+
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/review_submit/review.js') }}"></script>
+{% endblock %}
