@@ -1,4 +1,5 @@
 import web.dao.review_submit as review_submit
+import os
 
 
 def return_error(msg):
@@ -21,6 +22,7 @@ def get_records(department_id, type=None, server_id=None, task=None):
 
     if data is None:
         return return_error("获取数据失败")
+
     return data
 
 
