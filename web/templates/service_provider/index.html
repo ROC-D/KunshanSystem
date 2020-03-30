@@ -3,21 +3,74 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dropzone.min.css') }}" type="text/css">
-    {{ dropzone.style('margin: 20px 0; border: 2px dashed #0087F7 min-height: 400px') }}
+    <style>
+    .dropzone {
+        position: relative;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        margin: 20px 0;
+        border: 2px dashed #0087F7;
+        min-height: 200px
+    }
+    </style>
 {% endblock %}
 
 {% block title %}上传进度{% endblock %}
 
 {% block main %}
-    <div class="container">
-    {{ render_form(form) }}
-        {{ dropzone.create(action='service_provider.upload') }}
+    <div class="header">
+        <div class="container-fluid">
+            <!-- Body -->
+            <div class="header-body">
+                <div class="row align-items-end">
+                    <div class="col">
+                        <!-- Pretitle -->
+                        <h6 class="header-pretitle">服务商</h6>
+                        <!-- Title -->
+                        <h1 class="header-title">工作进度</h1>
+                    </div>
+                    <div class="col-auto">
+                    </div>
+                </div> <!-- / .row -->
+            </div> <!-- / .header-body -->
+        </div>
+    </div> <!-- / .header -->
+    <div class="container-fluid">
+    {# 显示已经提交的记录 #}
+    <div class="card">
+        <div class="card-header">
+            历史记录
+        </div>
+        <ul class="list-group">
+            {% for record in records %}
+                <li class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h3 class="mb-1 text-primary">{{ record.mission_type }}-知识产权科</h3>
+                        <span class="badge badge-warning float-right">未审核</span>
+                    </div>
+                    <span>完成数量：{{ record.complete_numbers }}</span>
+                    <small class="text-muted float-right">3天前</small>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <hr>
+    <h1 class="text-primary">添加已完成任务</h1>
+        {{ render_form(form) }}
+        <br>
+        <p class="text-muted">附件：</p>
+        <form action="{{ url_for('service_provider.upload') }}" class="dropzone" id="my-dropzone">
+        <div class="fallback">
+            <input name="file" type="file" multiple>
+        </div>
+        </form>
     </div>
 {% endblock %}
 
 {% block scripts %}
     <script src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>
-    {{ dropzone.config() }}
     <script type="text/javascript">
     TASKS = {{ tasks | safe}};
     </script>
