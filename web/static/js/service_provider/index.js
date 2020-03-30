@@ -1,3 +1,4 @@
+/*
 $('#departments').change(function () {
     let department_id = parseInt(this.value);
     $('#tasks').find('option').remove();
@@ -8,6 +9,12 @@ $('#departments').change(function () {
             $('#tasks').append(`<option ${task.type}>${task.type}</option>`);
         }
     }
+});
+ */
+//绑定提交记录
+$('#submit').on("click", function () {
+    //点击提交按钮后提交表单数据
+    $('#submit-record').submit();
 });
 //dropzone配置信息
 Dropzone.options.myDropzone = {

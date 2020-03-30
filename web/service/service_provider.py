@@ -18,14 +18,14 @@ def get_assignments(charger_id):
     return departments, tasks, records
 
 
-def add_one_record(charge_name, charge_id, department_id, mission_type, complete_number, uploads):
+def add_one_record(title, charge_name, charge_id, department_id, mission_type, complete_number, uploads):
     # 获取秒作为时间戳
     timestamp = int(time.time())
     # 创建以timestamp为名称的文件夹，并把uploads列表内的文件转移
     file_id = None if len(uploads) == 0 else timestamp
     # TODO:审核状态 默认为0
     audit_status = 0
-    last_id = provider_dao.add_one_record(charge_name, charge_id, department_id, timestamp, mission_type, complete_number, audit_status, file_id)
+    last_id = provider_dao.add_one_record(title, charge_name, charge_id, department_id, timestamp, mission_type, complete_number, audit_status, file_id)
 
     if last_id == -1:
         return False
