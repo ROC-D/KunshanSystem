@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% from 'bootstrap/form.html' import render_form %}
+{% from 'bootstrap/form.html' import render_field %}
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dropzone.min.css') }}" type="text/css">
@@ -12,7 +13,7 @@
         flex-direction: column;
         margin: 20px 0;
         border: 2px dashed #0087F7;
-        min-height: 200px
+        min-height: 100px
     }
 
     </style>
@@ -97,24 +98,27 @@
                 </h4>
             </div>
             <div class="card-body">
-                {{ render_form(form) }}
+                <form method="post" id="submit-record">
+                    {{ form.hidden_tag() }}
+                    {{ render_field(form.title) }}
+                    {{ render_field(form.assignments) }}
+                    {{ render_field(form.numbers) }}
+                </form>
+                <br>
+                <p class="text-muted">附件：</p>
+                <form action="{{ url_for('service_provider.upload') }}" class="dropzone" id="my-dropzone">
+                    <div class="fallback">
+                        <input name="file" type="file" multiple>
+                    </div>
+                </form>
+                {{ render_field(form.submit) }}
             </div>
         </div>
-        <br>
-        <p class="text-muted">附件：</p>
-        <form action="{{ url_for('service_provider.upload') }}" class="dropzone" id="my-dropzone">
-        <div class="fallback">
-            <input name="file" type="file" multiple>
-        </div>
-        </form>
     </div>
 {% endblock %}
 
 {% block scripts %}
     <script src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>
-    <script type="text/javascript">
-    TASKS = {{ tasks | safe}};
-    </script>
     <script src="{{ url_for('static', filename='js/service_provider/index.js') }}"></script>
 {% endblock %}
 

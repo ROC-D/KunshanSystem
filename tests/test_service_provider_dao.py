@@ -21,6 +21,7 @@ def test_get_assignments_by_charger(init_test_app):
     assert len(tasks) != 0
     for task in tasks:
         assert 'type' in task
+        assert 'task_id' in task
 
 
 if __name__ == '__main__':

@@ -17,15 +17,17 @@ def index():
     # 上传
     if form.validate_on_submit():
         uploads = form.get_upload_filenames()
-        department_id = form.departments.data
-        mission_type = form.tasks.data
+        department_id, mission_type = form.get_mission()
+        # department_id = form.departments.data
+        title = form.title.data
         complete_number = form.numbers.data
-        ret = provider_service.add_one_record(charger_name, charger_id, department_id, mission_type, complete_number, uploads)
+        ret = provider_service.add_one_record(title, charger_name, charger_id, department_id, mission_type,
+                                              complete_number, uploads)
         status, msg = ("success", "插入成功") if ret else ("danger", "插入失败")
         flash(msg, status)
         # 转到GET
         return redirect(url_for('service_provider.index'))
-    return render_template('service_provider/index.html', form=form, tasks=tasks, records=records)
+    return render_template('service_provider/index.html', form=form, records=records)
 
 
 @service_provider_bp.route('/upload', methods=['POST'])
