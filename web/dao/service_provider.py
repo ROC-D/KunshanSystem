@@ -27,6 +27,7 @@ def add_one_record(charge_name, charge_id, department_id, submit_time, mission_t
 
 
 def get_records(charger_id):
-    sql = 'select * from submit_record where charger_id=?'
+    sql = 'select *,FROM_UNIXTIME(submit_time, "%%Y-%%m-%%d") as sub_time from submit_record where charger_id=? ' \
+          'order by submit_time desc'
     results = db.select(sql, charger_id)
     return results
