@@ -32,15 +32,15 @@ Dropzone.options.myDropzone = {
     maxFilesize: 3, // MB
     acceptedFiles: "image/*, audio/*, video/*, text/*, application/*",
     maxFiles: null,
-    dictDefaultMessage: `Drop files here or click to upload.`, // message display on drop area
-    dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
-    dictInvalidFileType: "You can't upload files of this type.",
-    dictFileTooBig: "File is too big {{filesize}}. Max filesize: {{maxFilesize}}MiB.",
-    dictResponseError: "Server error: {{statusCode}}",
-    dictMaxFilesExceeded: "You can't upload any more files.",
-    dictCancelUpload: "Cancel upload",
-    dictRemoveFile: "Remove file",
-    dictCancelUploadConfirmation: "You really want to delete this file?",
-    dictUploadCanceled: "Upload canceled",
+    dictDefaultMessage: `上传附件`, // message display on drop area
+    dictFallbackMessage: "您的浏览器不支持拖拽上传",
+    dictInvalidFileType: "不支持的文件格式",
+    dictFileTooBig: "文件太大{{filesize}}. 最大: {{maxFilesize}}MiB.",
+    dictResponseError: "服务器错误: {{statusCode}}",
+    dictMaxFilesExceeded: "超出上传上限",
+    dictCancelUpload: "取消上传",
+    dictRemoveFile: "移除文件",
+    dictCancelUploadConfirmation: "确定删除文件?",
+    dictUploadCanceled: "已取消上传",
     // custom options code
 };

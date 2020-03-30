@@ -104,6 +104,7 @@ $("#submit-distribute-task").on("click", function (e) {
             }
             toggle_alert(true, "执行成功");
             $("#implementModal").modal("hide");
+            get_service_situation();
         }
     });
 });
@@ -256,7 +257,7 @@ function get_target() {
 
 
 function fill_server2modal(server_list) {
-    let  html= [`<option value="">--选择服务商--</option><option id="add-server" value=""><i class="fe fe-plus-circle"></i>添加服务商</option>>`];
+    let  html= [`<option value="">--选择服务商--</option><option id="add-server" value=""><i class="fe fe-plus"></i>添加服务商</option>>`];
     if(server_list.length == 0){
         get_server();
     }
