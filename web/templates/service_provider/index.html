@@ -14,51 +14,92 @@
         border: 2px dashed #0087F7;
         min-height: 200px
     }
+
     </style>
 {% endblock %}
 
-{% block title %}上传进度{% endblock %}
+{% block title %}工作进度{% endblock %}
 
 {% block main %}
-    <div class="header">
-        <div class="container-fluid">
-            <!-- Body -->
-            <div class="header-body">
-                <div class="row align-items-end">
-                    <div class="col">
-                        <!-- Pretitle -->
-                        <h6 class="header-pretitle">服务商</h6>
-                        <!-- Title -->
-                        <h1 class="header-title">工作进度</h1>
-                    </div>
-                    <div class="col-auto">
-                    </div>
-                </div> <!-- / .row -->
-            </div> <!-- / .header-body -->
+    <div class="container-fluid pt-4">
+        {# 显示已经提交的记录 #}
+        <div class="card">
+            <div class="card-header">
+                <!-- Title -->
+                <h4 class="card-header-title">
+                    提交记录
+                </h4>
+                <a href="#add-new-record-container" class="btn btn-primary lift"><span class="fe fe-plus"></span>新建提交</a>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-lg list-group-flush list my-n4">
+                {% for record in records %}
+                    <li class="list-group-item">
+                        <div class="row align-items-center">
+                            <div class="col ml-n2">
+                                <h3 class="mb-1">{{ record.record_title }}</h3>
+{#                                <div class="card-text small text-muted mb-1">#}
+{#                                    <a href="#!">{{ record.mission_type }}</a> ： <a href="#!">{{ record.complete_numbers }}</a>#}
+{#                                </div>#}
+                                <p class="card-text small text-muted">
+                                    2020/03/30
+                                </p>
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge badge-warning">未审核</span>
+                            </div>
+                            <div class="col-auto">
+                                 <a href="#!">{{ record.mission_type }}</a> ： <span>{{ record.complete_numbers }}</span>
+                            </div>
+                            <div class="col-auto">
+                                <a href="#!">三螺旋公司</a>
+{#                                - <a href="#!">{{ record.charger_name }}</a>#}
+                            </div>
+                            <div class="col-auto">
+                                <a href="#!" class="btn btn-sm btn-white d-none d-md-inline-block">下载附件</a>
+                            </div>
+                            <div class="col-auto">
+                                <!-- Dropdown -->
+                                <div class="dropdown">
+
+                                  <!-- Toggle -->
+                                  <a href="#" class="dropdown-ellipses dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fe fe-more-vertical"></i>
+                                  </a>
+
+                                  <!-- Menu -->
+                                  <div class="dropdown-menu dropdown-menu-right" style="">
+                                    <a href="#!" class="dropdown-item">
+                                      撤回
+                                    </a>
+                                    <a href="#!" class="dropdown-item">
+                                      Another action
+                                    </a>
+                                    <a href="#!" class="dropdown-item">
+                                      Something else here
+                                    </a>
+                                  </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            </div>
         </div>
-    </div> <!-- / .header -->
-    <div class="container-fluid">
-    {# 显示已经提交的记录 #}
-    <div class="card">
-        <div class="card-header">
-            历史记录
+        <hr>
+        <div class="card col-12" id="add-new-record-container">
+            <div class="card-header">
+                <h4 class="card-header-title">
+                    添加记录
+                </h4>
+            </div>
+            <div class="card-body">
+                {{ render_form(form) }}
+            </div>
         </div>
-        <ul class="list-group">
-            {% for record in records %}
-                <li class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h3 class="mb-1 text-primary">{{ record.mission_type }}-知识产权科</h3>
-                        <span class="badge badge-warning float-right">未审核</span>
-                    </div>
-                    <span>完成数量：{{ record.complete_numbers }}</span>
-                    <small class="text-muted float-right">3天前</small>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-    <hr>
-    <h1 class="text-primary">添加已完成任务</h1>
-        {{ render_form(form) }}
         <br>
         <p class="text-muted">附件：</p>
         <form action="{{ url_for('service_provider.upload') }}" class="dropzone" id="my-dropzone">
