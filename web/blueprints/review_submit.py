@@ -38,4 +38,7 @@ def read_record_filenames(records):
     for record in records:
         if record["file_id"]:
             dir = os.path.join(current_app.config["FILE_UPLOAD_PATH"], str(record["file_id"]))
-            record["file_list"] = os.listdir(dir)
+            try:
+                record["file_list"] = os.listdir(dir)
+            except FileNotFoundError as e:
+                pass
