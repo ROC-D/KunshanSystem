@@ -35,3 +35,14 @@ def update_record_status(record_id, status):
     if data != 1:
         return return_error("更新失败")
     return {"success": data}
+
+
+def get_unread_records_num(department_id):
+    """
+    返回未读提交的数量
+    : return:
+    """
+    data = review_submit.get_unread_records_num(department_id)
+    if data is None or len(data) == 0:
+        return return_error("查询失败")
+    return data[0]["count"]
