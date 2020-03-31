@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import SelectField, SubmitField, IntegerField, HiddenField, StringField
 from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, InputRequired
 
 
 class ProcessForm(FlaskForm):
@@ -36,3 +37,11 @@ class ProcessForm(FlaskForm):
                 task = t
                 break
         return task['department_id'], task['type']
+
+
+class AddProvidersForm(FlaskForm):
+    company = StringField("服务商名", validators=[InputRequired()])
+    charger = StringField("负责人名", validators=[InputRequired()])
+    charger_tel = StringField("负责人电话", validators=[InputRequired()])
+    submit = SubmitField('提交')
+

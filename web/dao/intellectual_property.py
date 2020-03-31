@@ -172,3 +172,19 @@ def get_service_comparison(department_id, mission_type):
     """.format(mission_type, department_id)
     return db.select(sql)
 
+
+def insert_one_record(company, charger, charger_tel):
+    """
+
+    """
+    sql = "insert into service_provider (service_provider_name, charger_name, tel, password) " \
+          "values ('{}','{}','{}','{}')".format(company, charger, charger_tel, charger_tel)
+    return db.insert(sql)
+
+
+def get_provider_info():
+    """
+    获取所有服务商的信息
+    """
+    sql = "SELECT charger_id, charger_name, service_provider_name, tel from service_provider order by charger_id desc"
+    return db.select(sql)
