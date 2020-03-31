@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField, IntegerField, HiddenField
-from wtforms.validators import DataRequired
+from wtforms import SelectField, SubmitField, IntegerField, HiddenField, StringField
+from wtforms.validators import DataRequired, InputRequired
 
 
 class ProcessForm(FlaskForm):
@@ -20,3 +20,10 @@ class ProcessForm(FlaskForm):
     def get_upload_filenames(self):
         text = self.uploads.data
         return [] if len(text) == 0 else text.split('|')
+
+
+class AddProvidersForm(FlaskForm):
+    company = StringField("服务商名", validators=[InputRequired()])
+    charger = StringField("负责人名", validators=[InputRequired()])
+    charger_tel = StringField("负责人电话", validators=[InputRequired()])
+    submit = SubmitField('提交')

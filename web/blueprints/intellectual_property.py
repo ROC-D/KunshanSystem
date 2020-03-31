@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, flash, redirect,url_for
 from web.service import intellectual_property as property_service
+from forms import AddProvidersForm
 import json
 
 intellectual_property_bp = Blueprint('intellectual_property', __name__)
@@ -120,3 +121,21 @@ def get_service_completion():
     except Exception as e:
         return {"error": True, "errorMsg": e}
 
+
+@intellectual_property_bp.route('/add_providers', methods=["GET", "POST"])
+def add_providers():
+    """
+    政府部门人员新增服务商
+    """
+    form = AddProvidersForm()
+    if form.validate_on_submit():
+        company = form.company.data
+        changer = form.charger.data
+        charger_tel = form.charger_tel.data
+        outcome = property_service.add_one_record(company, changer, charger_tel)
+        msg, status = ('success', '服务商添加成功') if outcome != -1 else ('danger', '添加失败, 请确认服务商信息是否重复')
+        flash(status, msg)
+        providers = property_service.get_provider_info()
+        return render_template('intellectual_property/add_provider.html', form=form, providers=providers)
+    providers = property_service.get_provider_info()
+    return render_template('intellectual_property/add_provider.html', form=form, providers=providers)
