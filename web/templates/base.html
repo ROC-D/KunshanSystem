@@ -124,7 +124,7 @@
                   <a href="/review" class="nav-link">
                       任务提交
                       {% if unread_records > 0 %}
-                          <span class="badge badge-soft-success ml-auto">{{ unread_records }}</span>
+                          <span class="badge badge-soft-danger ml-auto">{{ unread_records }}</span>
                       {% endif %}
                   </a>
                 </li>
@@ -136,11 +136,11 @@
               </ul>
             </div>
           </li>
-          <li class="nav-item">
-              <a class="nav-link " href="./station_news">
-                <i class="fe fe-bell"></i> 消息提醒 <span class="badge badge-soft-danger ml-auto">New</span>
-              </a>
-          </li>
+{#          <li class="nav-item">#}
+{#              <a class="nav-link " href="./station_news">#}
+{#                <i class="fe fe-bell"></i> 消息提醒 <span class="badge badge-soft-danger ml-auto">New</span>#}
+{#              </a>#}
+{#          </li>#}
           <li class="nav-item">
               <a class="nav-link " href="#personalInfo" data-toggle="collapse" role="button" aria-expanded="false">
                 <i class="fe fe-user"></i> 个人中心
