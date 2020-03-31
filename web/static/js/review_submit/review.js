@@ -21,4 +21,3 @@ $(".review-btn").on("click", function (e) {
        }
    });
 });
-console.log("this is review.js")
