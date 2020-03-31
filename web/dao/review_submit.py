@@ -1,6 +1,14 @@
 from web.utils import db
 
 
+def get_unread_records_num(department_id):
+    """
+    获取某部门未读消息数量
+    """
+    sql = "SELECT count(record_id) as count FROM submit_record WHERE department_id=? AND audit_status=0"
+    return db.select(sql, department_id)
+
+
 def get_all_records(department_id):
     """
     获取某一部门的全部提交记录
