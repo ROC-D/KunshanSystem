@@ -6,6 +6,7 @@ from web.blueprints.intellectual_property import intellectual_property_bp
 from web.blueprints.service_provider import service_provider_bp
 from web.blueprints.review_submit import review_submit_bp
 from web.blueprints.station_news import station_news_bp
+from web.blueprints.review_submit import review_submit_bp
 from web.extensions import bootstrap
 from web.utils import db
 from web.config import MYSQL_CONFIG

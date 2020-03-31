@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
 from web.service import intellectual_property as property_service
+from web.service import station_news as station_news_service
 import json
 
 intellectual_property_bp = Blueprint('intellectual_property', __name__)
@@ -9,7 +10,9 @@ intellectual_property_bp = Blueprint('intellectual_property', __name__)
 @intellectual_property_bp.route("/index")
 @intellectual_property_bp.route("/property")
 def index():
-    return render_template("intellectual_property/index.html")
+    #获取用户未读消息数量
+    unchecked_news_count = station_news_service.get_count_unchecked_news("时梦佳")
+    return render_template("intellectual_property/index.html", unchecked_news_count=unchecked_news_count)
 
 
 @intellectual_property_bp.route("/get_different_patent_type_count")
