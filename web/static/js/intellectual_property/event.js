@@ -255,14 +255,14 @@ function join_html_str(data){
 							<i class="fe fe-more-vertical"></i>
 						</a>
 						<div class="dropdown-menu dropdown-menu-right" task_id="${task_id}">
-							<a href="#!" class="dropdown-item">
-								查看
+							<a href="/review?server=${data[i]['charger_id']}" class="dropdown-item">
+								查看提交
 							</a>
 							<a href="#!" class="dropdown-item modify-menu">
-								修改
+								修改任务
 							</a>
 							<a href="#!" class="dropdown-item text-danger delete-menu">
-								删除
+								中止合作
 							</a>
 						</div>
 					</div>
