@@ -16,11 +16,7 @@ def review():
     records = review_submit.get_records(department_id=department_id, type=type, server_id=server, task=task)
 
     # TODO 测试读取文件名的性能
-    for record in records:
-        if record["file_id"]:
-            dir = os.path.join(current_app.config["FILE_UPLOAD_PATH"], str(record["file_id"]))
-            record["file_list"] = os.listdir(dir)
-
+    read_record_filenames(records)
     return render_template("review_submit/index.html", records=records)
 
 
@@ -35,3 +31,11 @@ def operate_record():
 def download(filename):
     # print(filename)
     return send_from_directory(current_app.config["FILE_UPLOAD_PATH"], filename)
+
+
+def read_record_filenames(records):
+    # TODO 测试读取文件名的性能
+    for record in records:
+        if record["file_id"]:
+            dir = os.path.join(current_app.config["FILE_UPLOAD_PATH"], str(record["file_id"]))
+            record["file_list"] = os.listdir(dir)

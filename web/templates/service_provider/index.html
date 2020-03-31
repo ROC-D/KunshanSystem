@@ -58,9 +58,27 @@
                             <div class="col-auto">
                                 <a href="#!">{{ record.charger_name }}</a>
                             </div>
-                            <div class="col-auto">
-                                <span class="btn btn-sm btn-white d-none d-md-inline-block">下载附件</span>
-                            </div>
+                            {% if record.file_id %}
+                                <div class="col-auto">
+                                    <!-- Dropdown -->
+                                    <div class="dropdown">
+
+                                      <!-- Toggle -->
+                                      <span class="dropdown-ellipses dropdown-toggle btn btn-sm" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fe fe-eye"></i>查阅附件
+                                      </span>
+                                        {% if record.file_id %}
+                                          <!-- Menu -->
+                                          <div class="dropdown-menu dropdown-menu-right">
+                                            {% for file_name in record.file_list %}
+                                                <a target="_blank" href="{{ url_for('review_submit.download', filename='%s/%s' % (record.file_id, file_name)) }}" class="dropdown-item">{{ file_name }}</a>
+                                            {% endfor %}
+                                          </div>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </li>
                 {% endfor %}

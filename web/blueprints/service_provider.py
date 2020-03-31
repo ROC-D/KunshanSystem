@@ -2,6 +2,7 @@ import os
 from flask import Blueprint, render_template, request, current_app, redirect, url_for, flash, jsonify
 from web.forms import ProcessForm
 from web.service import service_provider as provider_service
+from web.blueprints.review_submit import read_record_filenames
 
 service_provider_bp = Blueprint('service_provider', __name__)
 
@@ -11,8 +12,10 @@ def index():
     # TODO:登录的商务
     charger_id = 1
     charger_name = '负责人1'
-    # TODO:待修改
+    # TODO:待修改, 待优化
     departments, tasks, records = provider_service.get_assignments(charger_id)
+    read_record_filenames(records)
+
     form = ProcessForm(departments, tasks)
     # 上传
     if form.validate_on_submit():
