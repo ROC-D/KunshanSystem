@@ -121,7 +121,7 @@
             <div class="collapse show" id="siderbarServer">
               <ul class="nav nav-sm flex-column">
                 <li class="nav-item">
-                  <a href="/review" class="nav-link active">
+                  <a href="/review" class="nav-link">
                       任务提交
                       {% if unread_records > 0 %}
                           <span class="badge badge-soft-success ml-auto">{{ unread_records }}</span>
@@ -136,11 +136,37 @@
               </ul>
             </div>
           </li>
-          <!-- <li class="nav-item">
-                  <a class="nav-link " href="./widgets.html">
-                    <i class="fe fe-grid"></i> Widgets <span class="badge badge-soft-success ml-auto">New</span>
-                  </a>
-                </li> -->
+          <li class="nav-item">
+              <a class="nav-link " href="./station_news">
+                <i class="fe fe-bell"></i> 消息提醒 <span class="badge badge-soft-danger ml-auto">New</span>
+              </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link " href="#personalInfo" data-toggle="collapse" role="button" aria-expanded="false">
+                <i class="fe fe-user"></i> 个人中心
+              </a>
+
+              <div class="collapse" id="personalInfo">
+                  <ul class="nav nav-sm flex-column">
+                      <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                        科室负责人名称
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="#" class="nav-link">
+                        设置
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            注销
+                        </a>
+                    </li>
+                  </ul>
+              </div>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -148,35 +174,6 @@
 
   <!-- MAIN CONTENT -->
   <div class="main-content">
-    <nav class="navbar navbar-expand-md navbar-light d-md-flex d-none" id="topbar">
-      <div class="container-fluid">
-        <div class="d-md-flex d-none"></div>
-        <div class="navbar-user">
-        
-            <div class="mr-4 d-md-flex">
-              <!-- Toggle -->
-              <a href="{{ url_for('station_news.index') }}" class="navbar-user-link">
-                <span class="icon">
-                  <i class="fe fe-bell"></i>
-                </span>
-              </a>
-            </div>
-          <!-- Toggle -->
-          <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            科室负责人名称
-          </a>
-
-          <!-- Menu -->
-          <div class="dropdown-menu dropdown-menu-right">
-            <a href="#" class="dropdown-item"><i class="fe fe-settings"></i> 设置</a>
-            <hr class="dropdown-divider" />
-            <a href="#" class="dropdown-item"><i class="fe fe-log-out"></i> 注销</a>
-          </div>
-        </div>
-      </div>
-    </nav>
-    
     
     {# 消息 #}
     {% for message in get_flashed_messages(with_categories=True) %}
