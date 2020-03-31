@@ -13,6 +13,14 @@ def get_records(user_name):
     results = db.select(sql, user_name)
     return results
 
+def get_count_unchecked_news(user_name):
+    """
+    获取未读消息的条数
+    """
+    sql = "select count(*) from station_news where receiver_name = %s and news_status = 0" .format(user_name)
+    result = db.select_one(sql, user_name)
+    return result
+
 def get_user_id(user_name, user_kind):
     """
     根据用户名和用户种类获取用户id

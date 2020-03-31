@@ -40,3 +40,7 @@ def check_news(news_id):
     if last_id == -1:
         return False
     return True
+
+def get_count_unchecked_news(user_name):
+    result = station_news_dao.get_count_unchecked_news(user_name)
+    return result['count(*)']

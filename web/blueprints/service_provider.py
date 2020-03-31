@@ -2,6 +2,7 @@ import os
 from flask import Blueprint, render_template, request, current_app, redirect, url_for, flash, jsonify
 from web.forms import ProcessForm
 from web.service import service_provider as provider_service
+from web.blueprints.review_submit import read_record_filenames
 
 service_provider_bp = Blueprint('service_provider', __name__)
 
@@ -11,21 +12,25 @@ def index():
     # TODO:登录的商务
     charger_id = 1
     charger_name = '负责人1'
-    # TODO:待修改
+    # TODO:待修改, 待优化
     departments, tasks, records = provider_service.get_assignments(charger_id)
+    read_record_filenames(records)
+
     form = ProcessForm(departments, tasks)
     # 上传
     if form.validate_on_submit():
         uploads = form.get_upload_filenames()
-        department_id = form.departments.data
-        mission_type = form.tasks.data
+        department_id, mission_type = form.get_mission()
+        # department_id = form.departments.data
+        title = form.title.data
         complete_number = form.numbers.data
-        ret = provider_service.add_one_record(charger_name, charger_id, department_id, mission_type, complete_number, uploads)
+        ret = provider_service.add_one_record(title, charger_name, charger_id, department_id, mission_type,
+                                              complete_number, uploads)
         status, msg = ("success", "插入成功") if ret else ("danger", "插入失败")
         flash(msg, status)
         # 转到GET
         return redirect(url_for('service_provider.index'))
-    return render_template('service_provider/index.html', form=form, tasks=tasks, records=records)
+    return render_template('service_provider/index.html', form=form, records=records)
 
 
 @service_provider_bp.route('/upload', methods=['POST'])

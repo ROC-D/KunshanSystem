@@ -1,26 +1,13 @@
 {% extends 'base.html' %}
-{% from 'bootstrap/form.html' import render_form %}
-{% from 'bootstrap/form.html' import render_field %}
 
+{% block title %}任务审批{% endblock %}
 {% block styles %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropzone.min.css') }}" type="text/css">
     <style>
-    .dropzone {
-        position: relative;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        flex-direction: column;
-        margin: 20px 0;
-        border: 2px dashed #0087F7;
-        min-height: 100px
-    }
-
+        .review-btn:hover{
+            background: #f9f8f0;
+        }
     </style>
 {% endblock %}
-
-{% block title %}工作进度{% endblock %}
-
 {% block main %}
     <div class="container-fluid pt-4">
         {# 显示已经提交的记录 #}
@@ -30,7 +17,7 @@
                 <h3 class="card-header-title">
                     提交记录
                 </h3>
-                <a href="#add-new-record-container" class="btn btn-primary lift"><span class="fe fe-plus"></span>新建提交</a>
+
             </div>
             <div class="card-body">
                 <ul class="list-group list-group-lg list-group-flush list my-n4">
@@ -53,10 +40,10 @@
                                 {% endif %}
                             </div>
                             <div class="col-auto">
-                                 <a href="#!">{{ record.mission_type }}</a> ： <span>{{ record.complete_numbers }}</span>
+                                 <a href="{{ url_for('review_submit.review', task=record.mission_type) }}">{{ record.mission_type }}</a> ： <span>{{ record.complete_numbers }}</span>
                             </div>
                             <div class="col-auto">
-                                <a href="#!">{{ record.charger_name }}</a>
+                                <a href="{{ url_for('review_submit.review', server=record.charger_id) }}">{{ record.name }}</a>
                             </div>
                             {% if record.file_id %}
                                 <div class="col-auto">
@@ -79,42 +66,38 @@
                                     </div>
                                 </div>
                             {% endif %}
+                            {% if 0 == record.audit_status %}
+                                <div class="col-auto">
+                                    <!-- Dropdown -->
+                                    <div class="dropdown">
+
+                                      <!-- Toggle -->
+                                      <a href="#" class="dropdown-ellipses dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fe fe-more-vertical"></i>
+                                      </a>
+
+                                      <!-- Menu -->
+                                      <div class="dropdown-menu dropdown-menu-right" data-id="{{ record.record_id }}">
+                                        <span class="dropdown-item text-success review-btn cursor-pointer" data-status='1'>
+                                          通过
+                                        </span>
+                                        <span class="dropdown-item text-danger review-btn cursor-pointer" data-status='2'>
+                                          不通过
+                                        </span>
+                                      </div>
+
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </li>
                 {% endfor %}
             </ul>
-
-            </div>
-        </div>
-        <hr>
-        <div class="card col-12" id="add-new-record-container">
-            <div class="card-header">
-                <h4 class="card-header-title">
-                    添加记录
-                </h4>
-            </div>
-            <div class="card-body">
-                <form method="post" id="submit-record">
-                    {{ form.hidden_tag() }}
-                    {{ render_field(form.title) }}
-                    {{ render_field(form.assignments) }}
-                    {{ render_field(form.numbers) }}
-                </form>
-                <br>
-                <p class="text-muted">附件：</p>
-                <form action="{{ url_for('service_provider.upload') }}" class="dropzone" id="my-dropzone">
-                    <div class="fallback">
-                        <input name="file" type="file" multiple>
-                    </div>
-                </form>
-                {{ render_field(form.submit) }}
             </div>
         </div>
     </div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/service_provider/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/review_submit/review.js') }}"></script>
 {% endblock %}
-
