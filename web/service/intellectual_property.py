@@ -234,3 +234,20 @@ def get_service_completion(department_id, mission_type):
     获取某一部门某一类型的各服务商完成任务的数量
     """
     return property_dao.get_service_comparison(department_id, mission_type)
+
+
+def add_one_record(company, changer, charger_tel):
+    """
+    增加服务商
+    """
+    if company is None or changer is None or charger_tel is None:
+        return -1
+    else:
+        return property_dao.insert_one_record(company, changer, charger_tel)
+
+
+def get_provider_info():
+    """
+    获取服务于该科室下服务商的信息
+    """
+    return property_dao.get_provider_info()
