@@ -175,7 +175,7 @@ def get_service_comparison(department_id, mission_type):
 
 def insert_one_record(company, charger, charger_tel):
     """
-
+    新增一条服务商信息
     """
     sql = "insert into service_provider (service_provider_name, charger_name, tel, password) " \
           "values ('{}','{}','{}','{}')".format(company, charger, charger_tel, charger_tel)
@@ -188,3 +188,20 @@ def get_provider_info():
     """
     sql = "SELECT charger_id, charger_name, service_provider_name, tel from service_provider order by charger_id desc"
     return db.select(sql)
+
+
+def modify_providers(charger_id, company, charger_name, charger_tel):
+    """
+    用户更新服务商信息
+    """
+    sql = "update service_provider set service_provider_name='{}', charger_name='{}', " \
+          "tel='{}' where charger_id={}".format(company, charger_name, charger_tel, charger_id)
+    return db.update(sql)
+
+
+def delete_providers(charger_id):
+    """
+    删除服务商信息
+    """
+    sql = "delete from service_provider where charger_id = {}".format(charger_id)
+    return db.update(sql)

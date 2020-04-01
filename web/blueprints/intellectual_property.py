@@ -142,3 +142,25 @@ def add_providers():
         return render_template('intellectual_property/add_provider.html', form=form, providers=providers)
     providers = property_service.get_provider_info()
     return render_template('intellectual_property/add_provider.html', form=form, providers=providers)
+
+
+@intellectual_property_bp.route('/modify_providers', methods=['POST'])
+def modify_providers():
+    """
+    用户修改服务商信息
+    """
+    charger_id = request.form.get("charger_id")
+    company = request.form.get("company")
+    charger_name = request.form.get("charger_name")
+    charger_tel = request.form.get("charger_tel")
+    return property_service.modify_providers(charger_id, company, charger_name, charger_tel)
+
+
+@intellectual_property_bp.route('/delete_providers', methods=['POST'])
+def delete_provides():
+    """
+    用户删除服务商信息
+    """
+    charger_id = request.form.get("charger_id")
+    return property_service.dalete_providers(charger_id)
+

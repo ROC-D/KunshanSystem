@@ -251,3 +251,25 @@ def get_provider_info():
     获取服务于该科室下服务商的信息
     """
     return property_dao.get_provider_info()
+
+
+def modify_providers(charger_id, company, charger_name, charger_tel):
+    """
+    用户更新服务商信息
+    """
+    data = property_dao.modify_providers(charger_id, company, charger_name, charger_tel)
+    if data is None or data == 0:
+        return_error("修改失败")
+    else:
+        return {"success": True}
+
+
+def dalete_providers(charger_id):
+    """
+    用户删除服务商信息
+    """
+    data = property_dao.delete_providers(charger_id)
+    if data is None or data == 0:
+        return_error("修改失败")
+    else:
+        return {"success": True}
