@@ -33,56 +33,51 @@
                 <a href="#add-new-record-container" class="btn btn-primary lift"><span class="fe fe-plus"></span>新建提交</a>
             </div>
             <div class="card-body">
-                <ul class="list-group list-group-lg list-group-flush list my-n4">
-                {% for record in records %}
-                    <li class="list-group-item">
-                        <div class="row align-items-center">
-                            <div class="col ml-n2">
-                                <h4 class="mb-1">{{ record.record_title }}</h4>
-                                <p class="card-text small text-muted">
-                                    {{ record.sub_time }}
-                                </p>
-                            </div>
-                            <div class="col-auto">
-                                {% if 0 == record.audit_status %}
-                                    <span class="badge badge-warning">未审核</span>
-                                {% elif 1 == record.audit_status %}
-                                    <span class="badge badge-success">已通过</span>
-                                {% else %}
-                                    <span class="badge badge-danger">未通过</span>
-                                {% endif %}
-                            </div>
-                            <div class="col-auto">
-                                 <a href="#!">{{ record.mission_type }}</a> ： <span>{{ record.complete_numbers }}</span>
-                            </div>
-                            <div class="col-auto">
-                                <a href="#!">{{ record.charger_name }}</a>
-                            </div>
-                            {% if record.file_id %}
-                                <div class="col-auto">
-                                    <!-- Dropdown -->
+                <table class="table  table-nowrap card-table">
+                    <thead>
+                        <th>标题</th>
+                        <th>任务</th>
+                        <th>数量</th>
+                        <th>负责人</th>
+                        <th>提交时间</th>
+                        <th>状态</th>
+                        <th>附件</th>
+                    </thead>
+                    <tbody class="list">
+                        {% for record in records %}
+                            <tr>
+                                <td>{{ record.record_title }}</td>
+                                <td>{{ record.mission_type }}</td>
+                                <td>{{ record.complete_numbers }}</td>
+                                <td>{{ record.charger_name }}</td>
+                                <td>{{ record.sub_time }}</td>
+                                <td>
+                                    {% if 0 == record.audit_status %}
+                                        <span class="badge badge-warning">未审核</span>
+                                    {% elif 1 == record.audit_status %}
+                                        <span class="badge badge-success">已通过</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">未通过</span>
+                                    {% endif %}
+                                </td>
+                                <td>
                                     <div class="dropdown">
-
-                                      <!-- Toggle -->
-                                      <span class="dropdown-ellipses dropdown-toggle btn btn-sm" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <a class="dropdown-ellipses dropdown-toggle btn font-size-sm" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fe fe-eye"></i>查阅附件
-                                      </span>
-                                        {% if record.file_id %}
-                                          <!-- Menu -->
-                                          <div class="dropdown-menu dropdown-menu-right">
-                                            {% for file_name in record.file_list %}
-                                                <a target="_blank" href="{{ url_for('review_submit.download', filename='%s/%s' % (record.file_id, file_name)) }}" class="dropdown-item">{{ file_name }}</a>
-                                            {% endfor %}
-                                          </div>
-                                        {% endif %}
-
+                                      </a>
+                                      <div class="dropdown-menu dropdown-menu-right">
+                                          {% if record.file_id %}
+                                              {% for file_name in record.file_list %}
+                                                  <a target="_blank" href="{{ url_for('review_submit.download', filename='%s/%s' % (record.file_id, file_name)) }}" class="dropdown-item">{{ file_name }}</a>
+                                              {% endfor %}
+                                          {% endif %}
+                                      </div>
                                     </div>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
             </div>
         </div>
@@ -107,7 +102,7 @@
                         <input name="file" type="file" multiple>
                     </div>
                 </form>
-                {{ render_field(form.submit) }}
+                {{ form.submit(class='btn btn-block btn-primary') }}
             </div>
         </div>
     </div>

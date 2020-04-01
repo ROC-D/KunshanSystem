@@ -121,26 +121,51 @@
             <div class="collapse show" id="siderbarServer">
               <ul class="nav nav-sm flex-column">
                 <li class="nav-item">
-                  <a href="/review" class="nav-link active">
+                  <a href="/review" class="nav-link">
                       任务提交
                       {% if unread_records > 0 %}
-                          <span class="badge badge-soft-success ml-auto">{{ unread_records }}</span>
+                          <span class="badge badge-soft-danger ml-auto">{{ unread_records }}</span>
                       {% endif %}
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="/index#Daily-Progress" class="nav-link ">
+                  <a href="/manage_providers" class="nav-link ">
                     服务商管理
                   </a>
                 </li>
               </ul>
             </div>
           </li>
-          <!-- <li class="nav-item">
-                  <a class="nav-link " href="./widgets.html">
-                    <i class="fe fe-grid"></i> Widgets <span class="badge badge-soft-success ml-auto">New</span>
-                  </a>
-                </li> -->
+{#          <li class="nav-item">#}
+{#              <a class="nav-link " href="./station_news">#}
+{#                <i class="fe fe-bell"></i> 消息提醒 <span class="badge badge-soft-danger ml-auto">New</span>#}
+{#              </a>#}
+{#          </li>#}
+          <li class="nav-item">
+              <a class="nav-link " href="#personalInfo" data-toggle="collapse" role="button" aria-expanded="false">
+                <i class="fe fe-user"></i> 个人中心
+              </a>
+
+              <div class="collapse" id="personalInfo">
+                  <ul class="nav nav-sm flex-column">
+                      <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                        科室负责人名称
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="#" class="nav-link">
+                        设置
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            注销
+                        </a>
+                    </li>
+                  </ul>
+              </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -155,7 +180,7 @@
         
             <div class="mr-4 d-md-flex">
               <!-- Toggle -->
-              <a href="{{ url_for('station_news.index') }}" class="navbar-user-link">
+              <a href="{{ url_for('review_submit.review') }}" class="navbar-user-link">
                 <span class="icon" style="position:relative;">
                   <i class="fe fe-bell"></i>
                     <span style="left:14px;top:-10px;font-size:9px;position:absolute;border-radius: 50%;height: 20px;width: 20px;display: inline-block;background: #f20c55;vertical-align: top;">
@@ -178,8 +203,6 @@
         </div>
       </div>
     </nav>
-    
-    
     {# 消息 #}
     {% for message in get_flashed_messages(with_categories=True) %}
       <div class="alert alert-{{ message[0] }} text-center" role="alert">

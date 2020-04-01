@@ -26,7 +26,6 @@ class ProcessForm(FlaskForm):
         text = self.uploads.data
         return [] if len(text) == 0 else text.split('|')
 
-<<<<<<< HEAD
     def get_mission(self):
         # 获取到任务的id
         task_id = self.assignments.data
@@ -37,11 +36,10 @@ class ProcessForm(FlaskForm):
                 task = t
                 break
         return task['department_id'], task['type']
-=======
+
 
 class AddProvidersForm(FlaskForm):
     company = StringField("服务商名", validators=[InputRequired()])
     charger = StringField("负责人名", validators=[InputRequired()])
     charger_tel = StringField("负责人电话", validators=[InputRequired()])
     submit = SubmitField('提交')
->>>>>>> origin/zhang

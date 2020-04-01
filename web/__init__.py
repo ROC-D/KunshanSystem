@@ -5,7 +5,6 @@ from web.settings import configuration
 from web.blueprints.intellectual_property import intellectual_property_bp
 from web.blueprints.service_provider import service_provider_bp
 from web.blueprints.review_submit import review_submit_bp
-from web.blueprints.station_news import station_news_bp
 from web.blueprints.review_submit import review_submit_bp
 from web.extensions import bootstrap
 from web.utils import db
@@ -50,7 +49,7 @@ def register_blueprints(app):
     app.register_blueprint(intellectual_property_bp, url_prefix="/")
     app.register_blueprint(service_provider_bp, url_prefix='/provider')
     app.register_blueprint(review_submit_bp, url_prefix='/review')
-    app.register_blueprint(station_news_bp, url_prefix='/message')
+    # app.register_blueprint(station_news_bp, url_prefix='/station_news')
 
 
 def register_errors(app):

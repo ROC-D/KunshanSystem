@@ -125,7 +125,7 @@ def get_service_completion():
         return {"error": True, "errorMsg": e}
 
 
-@intellectual_property_bp.route('/add_providers', methods=["GET", "POST"])
+@intellectual_property_bp.route('/manage_providers', methods=["GET", "POST"])
 def add_providers():
     """
     政府部门人员新增服务商

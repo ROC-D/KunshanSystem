@@ -14,7 +14,7 @@ def get_all_records(department_id):
     获取某一部门的全部提交记录
     """
     sql = "SELECT submit_record.*, service_provider_name as name, " \
-          "FROM_UNIXTIME(submit_time, '%%Y-%%m-%%d') as submit_time " \
+          "FROM_UNIXTIME(submit_time, '%%Y-%%m-%%d') as sub_time " \
           "FROM submit_record LEFT JOIN service_provider on submit_record.charger_id=service_provider.charger_id " \
           "WHERE department_id=? ORDER BY audit_status ASC, submit_time DESC"
     return db.select(sql, department_id)
