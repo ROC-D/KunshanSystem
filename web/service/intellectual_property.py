@@ -270,6 +270,6 @@ def dalete_providers(charger_id):
     """
     data = property_dao.delete_providers(charger_id)
     if data is None or data == 0:
-        return_error("修改失败")
+        return return_error("修改失败")
     else:
         return {"success": True}
