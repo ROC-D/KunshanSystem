@@ -15,7 +15,9 @@
         border: 2px dashed #0087F7;
         min-height: 100px
     }
-
+    .no-wrap{
+        white-space: nowrap;
+    }
     </style>
 {% endblock %}
 
@@ -33,7 +35,7 @@
                 <a href="#add-new-record-container" class="btn btn-primary lift"><span class="fe fe-plus"></span>新建提交</a>
             </div>
             <div class="card-body">
-                <table class="table  table-nowrap card-table">
+                <table class="table table-responsive card-table">
                     <thead>
                         <th>标题</th>
                         <th>任务</th>
@@ -47,10 +49,10 @@
                         {% for record in records %}
                             <tr>
                                 <td>{{ record.record_title }}</td>
-                                <td>{{ record.mission_type }}</td>
+                                <td><span class="no-wrap">{{ record.mission_type }}</span></td>
                                 <td>{{ record.complete_numbers }}</td>
-                                <td>{{ record.charger_name }}</td>
-                                <td>{{ record.sub_time }}</td>
+                                <td><span class="no-wrap">{{ record.charger_name }}</span></td>
+                                <td><span class="no-wrap">{{ record.sub_time }}</span></td>
                                 <td>
                                     {% if 0 == record.audit_status %}
                                         <span class="badge badge-warning">未审核</span>

@@ -6,6 +6,9 @@
         .review-btn:hover{
             background: #f9f8f0;
         }
+        .no-wrap{
+            white-space: nowrap;
+        }
     </style>
 {% endblock %}
 {% block main %}
@@ -20,7 +23,7 @@
 
             </div>
             <div class="card-body">
-                <table class="table  table-nowrap card-table">
+                <table class="table table-responsive card-table">
                     <thead>
                         <th>标题</th>
                         <th>任务</th>
@@ -35,10 +38,10 @@
                         {% for record in records %}
                             <tr>
                                 <td>{{ record.record_title }}</td>
-                                <td><a href="{{ url_for('review_submit.review', task=record.mission_type) }}">{{ record.mission_type }}</a></td>
+                                <td><a href="{{ url_for('review_submit.review', task=record.mission_type) }}" class="no-wrap">{{ record.mission_type }}</a></td>
                                 <td>{{ record.complete_numbers }}</td>
-                                <td><a href="{{ url_for('review_submit.review', server=record.charger_id) }}">{{ record.name }}</a></td>
-                                <td>{{ record.sub_time }}</td>
+                                <td><a href="{{ url_for('review_submit.review', server=record.charger_id) }}" class="no-wrap">{{ record.name }}</a></td>
+                                <td><span class="no-wrap">{{ record.sub_time }}</span></td>
                                 <td>
                                     {% if 0 == record.audit_status %}
                                         <span class="badge badge-warning">未审核</span>

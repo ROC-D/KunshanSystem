@@ -78,9 +78,7 @@
             <hr class="dropdown-divider">
             <a href="#" class="dropdown-item"><i class="fe fe-log-out"></i> 注销</a>
           </div>
-
         </div>
-
       </div>
 
       <!-- Collapse -->
@@ -173,36 +171,6 @@
 
   <!-- MAIN CONTENT -->
   <div class="main-content">
-    <nav class="navbar navbar-expand-md navbar-light d-md-flex d-none" id="topbar">
-      <div class="container-fluid">
-        <div class="d-md-flex d-none"></div>
-        <div class="navbar-user">
-        
-            <div class="mr-4 d-md-flex">
-              <!-- Toggle -->
-              <a href="{{ url_for('review_submit.review') }}" class="navbar-user-link">
-                <span class="icon" style="position:relative;">
-                  <i class="fe fe-bell"></i>
-                    <span style="left:14px;top:-10px;font-size:9px;position:absolute;border-radius: 50%;height: 20px;width: 20px;display: inline-block;background: #f20c55;vertical-align: top;">
-                        <span style="display: block;color: #FFFFFF;height: 20px;line-height: 20px;text-align: center">{{ unchecked_news_count }}</span></span>
-                </span>
-              </a>
-            </div>
-          <!-- Toggle -->
-          <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            科室负责人名称
-          </a>
-
-          <!-- Menu -->
-          <div class="dropdown-menu dropdown-menu-right">
-            <a href="#" class="dropdown-item"><i class="fe fe-settings"></i> 设置</a>
-            <hr class="dropdown-divider" />
-            <a href="#" class="dropdown-item"><i class="fe fe-log-out"></i> 注销</a>
-          </div>
-        </div>
-      </div>
-    </nav>
     {# 消息 #}
     {% for message in get_flashed_messages(with_categories=True) %}
       <div class="alert alert-{{ message[0] }} text-center" role="alert">
