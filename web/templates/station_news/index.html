@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}消息提醒{% endblock %}
+
+{% block main %}
+
+    <div class="container-fluid pt-4">
+        <div class="card col-sm-16">
+            <div class="card-header">
+                历史消息
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <ul class="nav nav-pills nav-fill">
+                        <li class="nav-item">
+                            <a href="#unread-list" class="nav-link active" data-toggle="tab">
+                                <i class="glyphicon glyphicon-tasks"></i>
+                                未读消息({{ unchecked_news | length }})
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#read-list" class="nav-link" data-toggle="tab">
+                                <i class="glyphicon glyphicon-hdd"></i>
+                                已读消息({{ checked_news | length }})
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" style="padding-top: 20px;">
+                        <div class="tab-pane fade in active show" id="unread-list">
+                            <ul class="list-group">
+                                {% for unchecked_news in unchecked_news %}
+                                    <li class="list-group-item list-group-item-action flex-column">
+                                        <span  class="text-dark news_id" style="display: none">
+                                             {{ unchecked_news['news_id'] }}
+                                        </span>
+                                        <span  class="text-dark sender_name" style="padding-right: 30px">
+                                             {{ unchecked_news['sender_name'] }}
+                                        </span>
+                                        <span  class="text-dark sender_kind" style="padding-right: 30px">
+                                             {{ unchecked_news['sender_kind'] }}
+                                        </span>
+                                        <span  class="text-dark news_content" style="padding-right: 30px;">
+                                            {{ unchecked_news['news_content']|truncate(50)}}
+                                        </span>
+                                        <span class="text-dark news_date" style="padding-right: 30px">
+                                            {{ unchecked_news['news_date'] }}
+                                        </span>
+                                        <div class="float-right " style="padding-top: 10px">
+                                            <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#scheduleModal2" onclick="showModal2($(this));">详情</button>
+                                            <button class="btn btn-light btn-sm" onclick="checked_news($(this));">已读</button>
+                                            <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#scheduleModal" onclick="showModal($(this));">回复</button>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade in" id="read-list">
+                            <ul class="list-group">
+                                {% for checked_news in checked_news %}
+                                    <li class="list-group-item list-group-item-action flex-column">
+                                        <span class="text-dark news_id" style="padding-right: 30px;display: none">
+                                             {{ checked_news['news_id'] }}
+                                        </span>
+                                        <span class="text-dark sender_name" style="padding-right: 30px">
+                                             {{ checked_news['sender_name'] }}
+                                        </span>
+                                        <span class="text-dark sender_kind" style="padding-right: 30px">
+                                             {{ checked_news['sender_kind'] }}
+                                        </span>
+                                        <span class="text-dark news_content" style="padding-right: 30px;width: 1000px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                                            {{ checked_news['news_content']|truncate(30) }}
+                                        </span>
+                                        <span class="text-dark news_date" style="padding-right: 30px">
+                                            {{ checked_news['news_date'] }}
+                                        </span>
+                                        <div class="float-right " style="padding-top: 10px">
+                                            <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#scheduleModal2" onclick="showModal2($(this));">详情</button>
+                                            <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#scheduleModal" onclick="showModal($(this));">回复</button>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- 回复模态框 -->
+    <div class="modal fade" id="scheduleModal" style="display: none">
+    <div class="modal-dialog" >
+      <div class="modal-content">
+        <!-- 模态框主体 -->
+        <div class="container-fluid">
+            <form autocomplete="off">
+                <br>
+                <h1 class="text-primary" >发送消息</h1>
+                <label  for="receiver_kind">接收人所属部门:</label>
+                <div>
+                    <select class="form-control"  id="receiver_kind_model" >
+                      <option>知识产权科</option>
+                      <option>交流合作科</option>
+                      <option>产学研合作科</option>
+                      <option>科技中介</option>
+                    </select>
+                </div>
+                <br>
+                <label for="receiver_name">接收人姓名:</label>
+                <div >
+                    <select class="form-control" id="receiver_name_model">
+                      <option>时梦佳</option>
+                      <option>张**</option>
+                      <option>李**</option>
+                      <option>负责人1</option>
+                    </select>
+                </div>
+
+                <br>
+                <label  for="news_content"><h2>详细内容:</h2></label>
+                <div>
+                    <textarea contenteditable="true" rows="10" class="form-control" name="news_content" id="news_content_model" type="text" required></textarea>
+                </div>
+            </form>
+
+        </div>
+
+        <!-- 模态框底部 -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info" id="send_message" onclick="send_news_model()">发送</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+    <!-- 详情模态框 -->
+    <div class="modal fade" id="scheduleModal2" style="display: none">
+        <div class="modal-dialog" >
+          <div class="modal-content">
+
+            <!-- 模态框主体 -->
+            <div class="container-fluid">
+                <form autocomplete="off">
+                    <br>
+                    <h1 class="text-primary" >消息详情</h1>
+                    <div class="input-group flex-nowrap">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">发送者所属部门：</span>
+                        </div>
+                        <input id="sender_kind_detail" name="sender_kind_detail" class="form-control mod"  type="text" readonly>
+                    </div>
+                    <br>
+                    <div class="input-group flex-nowrap">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">发送者：</span>
+                        </div>
+                        <input id="sender_name_detail" name="sender_name_detail" class="form-control mod"  type="text" readonly>
+                    </div>
+                    <br>
+                    <div class="input-group flex-nowrap">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">日期：</span>
+                        </div>
+                        <input id="news_date_detail" name="news_date_detail" class="form-control mod"  type="text" readonly>
+                    </div>
+                    <br>
+                    <label for="news_content"><h2>详细内容:</h2></label>
+                    <div>
+                        <textarea contenteditable="true" rows="10" class="form-control" name="news_content_detail" id="news_content_detail" type="text" readonly></textarea>
+                    </div>
+                </form>
+
+            </div>
+
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>
+    <script type="text/javascript">
+    TASKS = {{ tasks | safe}};
+    </script>
+    <script src="{{ url_for('static', filename='js/station_news/index.js') }}"></script>
+{% endblock %}
+
